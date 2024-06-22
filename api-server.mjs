@@ -27,19 +27,7 @@ api.get('/logout', (req, res) => {
   res.clearCookie('access_token');
   res.clearCookie('encrypted_refresh_token');
   res.redirect('/index.html');
-});var refresh_token = req.query.refresh_token;
-var authOptions = {
-  url: 'https://accounts.spotify.com/api/token',
-  headers: {
-    'content-type': 'application/x-www-form-urlencoded',
-    'Authorization': 'Basic ' + (new Buffer.from(client_id + ':' + client_secret).toString('base64'))
-  },
-  form: {
-    grant_type: 'refresh_token',
-    refresh_token: refresh_token
-  },
-  json: true
-};
+});
 
 // GEVAARLIJKE TEST ENDPOINTS
 // api.get('/encrypt', (req, res) => {
