@@ -4,16 +4,25 @@ if (Cookies.get('access_token')) {
     // document.write('logged in')
 }
 
-async function spot(endpoint, options) {
+async function spot(endpoint, options, method = 'GET') {
     if (Cookies.get('access_token') === undefined) {
         throw new Error('Not logged in')
     }
+
     let url = endpoint + '?' + new URLSearchParams(options).toString()
-    return await fetch(url, {
+
+    let response = await fetch(url, {
+        method: method,
         headers: {
             'Authorization': 'Bearer ' + Cookies.get('access_token')
         }
-    }).then(res => res.json())
+    })
+    
+    if (method === 'GET') {
+        return await response.json()
+    } else {
+        return response
+    }
 }
 
 window.spot = spot
@@ -54,6 +63,12 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
     player.addListener('ready', ({ device_id }) => {
         console.log('Ready with Device ID', device_id);
+        setTimeout(() => {
+            spot('https://api.spotify.com/v1/me/player/play', {
+                device_id: device_id,
+                uris: ['spotify:track:7xGfFoTpQ2E7fRF5lN10tr']
+            }, 'PUT');
+        }, 5000);
     });
 
     player.addListener('not_ready', ({ device_id }) => {
