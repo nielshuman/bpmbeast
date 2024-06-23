@@ -4,19 +4,24 @@ import crypto from 'crypto';
 import querystring from 'querystring';
 import http from 'http'; 
 import axios from 'axios';
+import cookieParser from 'cookie-parser';
+import { access } from 'fs';
+
 dotenv.config();
 
 const app = express();
 const api = express.Router();
 
+app.use(cookieParser());
 app.use('/api', api);
+app.use('/dist', express.static('dist'));
 app.use(express.static('www'));
 
 api.get('/login', (req, res) => {
   res.redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({
       response_type: 'code',
-      scope: 'user-read-private user-read-email streaming',
+      scope: 'user-read-private user-read-email user-library-read streaming',
       redirect_uri: process.env.API_BASE_URL + '/callback',
       client_id: process.env.CLIENT_ID,
       state: crypto.randomBytes(16).toString('base64url')
@@ -58,7 +63,7 @@ api.get('/refresh', async (req, res) => {
   let refreshToken = decryptToken(req.cookies.encrypted_refresh_token);
   let token = await refreshAccessToken(refreshToken);
   res.cookie('access_token', token.access_token, { secure: true });
-  res.json({})
+  res.json({access_token: token.access_token});
 });
 
 async function getAccessToken(code) {
@@ -81,7 +86,7 @@ async function refreshAccessToken(refreshToken) {
     refresh_token: refreshToken
   }), {
     headers: {
-      'Authorization': 'Basic ' + (Buffer.from(+rocess.env.CLIENT_ID + ':' + process.env.CLIENT_SECRET).toString('base64')),
+      'Authorization': 'Basic ' + (Buffer.from(process.env.CLIENT_ID + ':' + process.env.CLIENT_SECRET).toString('base64')),
       'Content-Type': 'application/x-www-form-urlencoded',
     },
   });
