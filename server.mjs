@@ -2,10 +2,8 @@ import express from 'express';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
 import querystring from 'querystring';
-import http from 'http'; 
 import axios from 'axios';
 import cookieParser from 'cookie-parser';
-import { access } from 'fs';
 
 dotenv.config();
 
@@ -94,7 +92,7 @@ async function refreshAccessToken(refreshToken) {
 }
 
 /**
- * Encrypts a token using AES-256-CBC encryption.
+ * Encrypt met AES-256-CBC
  */
 function encryptToken(token) {
   const iv = crypto.randomBytes(16);
@@ -106,7 +104,7 @@ function encryptToken(token) {
 }
 
 /**
- * Decrypts a token using AES-256-CBC encryption.
+ * Decrypt met AES-256-CBC
  */
 function decryptToken(encryptedtoken) {
   const iv = Buffer.from(encryptedtoken.slice(0, 32), 'hex');

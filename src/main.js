@@ -25,10 +25,13 @@ async function spot(endpoint, options, method = 'GET') {
     }
 }
 
+async function* getSavedTracks() {
+    yield 'poep';
+}
+
 window.spot = spot
 let first25 = await spot('https://api.spotify.com/v1/me/tracks', {offset: 0, limit: 50})
 let next25 = await spot(first25.next)
-
 
 let tracks = first25.items.concat(next25.items);
 
@@ -63,12 +66,12 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
     player.addListener('ready', ({ device_id }) => {
         console.log('Ready with Device ID', device_id);
-        setTimeout(() => {
-            spot('https://api.spotify.com/v1/me/player/play', {
-                device_id: device_id,
-                uris: ['spotify:track:7xGfFoTpQ2E7fRF5lN10tr']
-            }, 'PUT');
-        }, 5000);
+        // setTimeout(() => {
+        //     spot('https://api.spotify.com/v1/me/player/play', {
+        //         device_id: device_id,
+        //         uris: ['spotify:track:7xGfFoTpQ2E7fRF5lN10tr']
+        //     }, 'PUT');
+        // }, 5000);
     });
 
     player.addListener('not_ready', ({ device_id }) => {
