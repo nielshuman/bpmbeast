@@ -1,8 +1,5 @@
 import Cookies from 'js-cookie'
-// window.Cookies = Cookies
-if (Cookies.get('access_token')) {
-    // document.write('logged in')
-}
+document.getElementById('login-status').innerHTML = Cookies.get('access_token') ? 'Logged in' : 'Not logged in';
 
 async function spot(endpoint, options, method = 'GET') {
     if (Cookies.get('access_token') === undefined) {
@@ -10,6 +7,7 @@ async function spot(endpoint, options, method = 'GET') {
     }
 
     let url = endpoint;
+
     if (options) {
         url += '?' + new URLSearchParams(options).toString();
     }
@@ -19,8 +17,25 @@ async function spot(endpoint, options, method = 'GET') {
         headers: {
             'Authorization': 'Bearer ' + Cookies.get('access_token')
         }
-    })
+    });
     
+    if (response.status === 401) {
+        console.log('Refreshing token');
+        await fetch('/api/refresh').then(res => res.json()).then(data => data.access_token);
+        return await spot(endpoint, options, method);
+    }
+
+    if (response.status === 429) {
+        let retryAfter = response.headers.get('Retry-After');
+        await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+        return await spot(endpoint, options, method);
+    }
+
+    if  (!response.ok) {
+        console.log(response);
+        throw new Error(response.statusText);
+    }
+
     if (method === 'GET') {
         return await response.json()
     } else {
@@ -28,11 +43,19 @@ async function spot(endpoint, options, method = 'GET') {
     }
 }
 
-async function* getSavedTracks(offset = 0) {
+function getAllPlayListTracks(playlist_id) {
+    return getTracks(offset, `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`);
+}
+
+function getAllSavedTracks() {
+    return getTracks('https://api.spotify.com/v1/me/tracks');
+}
+
+
+async function* getTracks(endpoint) {
     let MAX_SPOTIFY_LIMIT = 50;
-    let response = await spot('https://api.spotify.com/v1/me/tracks', {
+    let response = await spot(endpoint, {
         limit: MAX_SPOTIFY_LIMIT,
-        offset: offset
     });
     yield response;
     while (response.next) {
@@ -42,16 +65,22 @@ async function* getSavedTracks(offset = 0) {
 }
 
 window.spot = spot;
-window.getSavedTracks = getSavedTracks;
+window.getSavedTracks = getTracks;
+window.getAllPlayListTracks = getAllPlayListTracks;
 
 let tracks = [];
-
-for await (let { items, total } of getSavedTracks()) {
-    console.log(items)
-    addTracks(items, tracks.length);
-    tracks = tracks.concat(items);
-    document.getElementById('status').innerHTML = `Loaded ${tracks.length} of ${total} tracks (${Math.round(tracks.length / total * 100)}%)`;
-} 
+async function loadTracks() {
+    document.getElementById('status').innerHTML = 'Loading...';
+    document.getElementById('get').disabled = true;
+    for await (let { items, total } of getAllSavedTracks()) {
+        // console.log(items)
+        addTracks(items, tracks.length);
+        tracks = tracks.concat(items);
+        let percentage = Math.round(tracks.length / total * 100);
+        document.getElementById('status').innerHTML = `Loaded ${tracks.length} of ${total} tracks (${percentage}%)`;
+        document.getElementById('progress').value = percentage;
+    }
+}
 
 function addTracks(items, counter) {
     for (let i = 0; i < items.length; i++) {
@@ -68,6 +97,8 @@ function addTracks(items, counter) {
         document.body.appendChild(trackImage);
     }
 }
+
+document.getElementById('get').addEventListener('click', loadTracks);
 
 // const script = document.createElement("script");
 // script.src = "https://sdk.scdn.co/spotify-player.js";
