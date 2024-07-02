@@ -69,7 +69,7 @@ async function* getTracks(endpoint) {
 async function loadTracks() {
     document.getElementById('status').innerHTML = 'Loading...';
     document.getElementById('get').disabled = true;
-    for await (let { items, total } of getAllPlayListTracks('4z8jDyYBtoC21zRoJfSLqL')) {
+    for await (let { items, total } of getAllSavedTracks('4z8jDyYBtoC21zRoJfSLqL')) {
         // console.log(items)
         addTracks(items, tracks.length);
         tracks = tracks.concat(items);
@@ -119,8 +119,15 @@ async function loadAudioFeatures() {
     console.log(features);
 }
 
-function getTracksByBPM(bpm, tolerance = 5, sorting_method = 'closest') {
-    let tracks = features.filter(feature => Math.abs(feature.tempo - bpm) <= tolerance);
+function getTracksByBPM(bpm, tolerance = 5, sorting_method = 'slowest', enable_half_and_double_time = true) {
+    let tracks = features.filter(feature => {
+        let tempo = feature.tempo;
+        let full_time_matches = (Math.abs(tempo - bpm) <= tolerance);
+        let half_time_matches = (Math.abs(tempo / 2 - bpm) <= tolerance);
+        let double_time_matches = (Math.abs(tempo * 2 - bpm) <= tolerance); 
+        return full_time_matches || (enable_half_and_double_time && (half_time_matches || double_time_matches));
+    });
+    
     const sorting_methods = {
         closest: (a, b) => Math.abs(a.tempo - bpm) - Math.abs(b.tempo - bpm),
         fastest: (a, b) => a.tempo - b.tempo,
@@ -131,6 +138,7 @@ function getTracksByBPM(bpm, tolerance = 5, sorting_method = 'closest') {
 
 document.getElementById('get').addEventListener('click', loadTracks);
 document.getElementById('get2').addEventListener('click', loadAudioFeatures);
+
 // const script = document.createElement("script");
 // script.src = "https://sdk.scdn.co/spotify-player.js";
 // script.async = true;
@@ -169,3 +177,5 @@ document.getElementById('get2').addEventListener('click', loadAudioFeatures);
 // };
 
 
+
+window.getTracksByBPM = getTracksByBPM;
