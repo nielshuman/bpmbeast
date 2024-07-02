@@ -1,4 +1,7 @@
 import Cookies from 'js-cookie'
+let tracks = [];
+let features = [];
+
 document.getElementById('login-status').innerHTML = Cookies.get('access_token') ? 'Logged in' : 'Not logged in';
 
 async function spot(endpoint, options, method = 'GET') {
@@ -44,13 +47,12 @@ async function spot(endpoint, options, method = 'GET') {
 }
 
 function getAllPlayListTracks(playlist_id) {
-    return getTracks(offset, `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`);
+    return getTracks(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks`);
 }
 
 function getAllSavedTracks() {
     return getTracks('https://api.spotify.com/v1/me/tracks');
 }
-
 
 async function* getTracks(endpoint) {
     let MAX_SPOTIFY_LIMIT = 50;
@@ -64,15 +66,10 @@ async function* getTracks(endpoint) {
     }
 }
 
-window.spot = spot;
-window.getSavedTracks = getTracks;
-window.getAllPlayListTracks = getAllPlayListTracks;
-
-let tracks = [];
 async function loadTracks() {
     document.getElementById('status').innerHTML = 'Loading...';
     document.getElementById('get').disabled = true;
-    for await (let { items, total } of getAllSavedTracks()) {
+    for await (let { items, total } of getAllPlayListTracks('4z8jDyYBtoC21zRoJfSLqL')) {
         // console.log(items)
         addTracks(items, tracks.length);
         tracks = tracks.concat(items);
@@ -80,6 +77,7 @@ async function loadTracks() {
         document.getElementById('status').innerHTML = `Loaded ${tracks.length} of ${total} tracks (${percentage}%)`;
         document.getElementById('progress').value = percentage;
     }
+    document.getElementById('get2').disabled = false;
 }
 
 function addTracks(items, counter) {
@@ -98,8 +96,41 @@ function addTracks(items, counter) {
     }
 }
 
-document.getElementById('get').addEventListener('click', loadTracks);
+async function* getTracksAudioFeatures(tracks) {
+    let MAX_SPOTIFY_LIMIT = 100;
+    let ids = tracks.map(track => track.track.id);
+    for (let i = 0; i < ids.length; i += MAX_SPOTIFY_LIMIT) {
+        let response = await spot('https://api.spotify.com/v1/audio-features', {
+            ids: ids.slice(i, i + MAX_SPOTIFY_LIMIT).join(',')
+        });
+        yield { audio_features: response.audio_features, total: ids.length};
+    }
+}
 
+async function loadAudioFeatures() {
+    document.getElementById('status2').innerHTML = 'Loading...';
+    document.getElementById('get2').disabled = true;
+    for await (let { audio_features, total} of getTracksAudioFeatures(tracks)) {
+        features = features.concat(audio_features);
+        let percentage = Math.round(features.length / total * 100);
+        document.getElementById('status2').innerHTML = `Loaded ${features.length} of ${total} audio features (${percentage}%)`;
+        document.getElementById('progress2').value = percentage;
+    }
+    console.log(features);
+}
+
+function getTracksByBPM(bpm, tolerance = 5, sorting_method = 'closest') {
+    let tracks = features.filter(feature => Math.abs(feature.tempo - bpm) <= tolerance);
+    const sorting_methods = {
+        closest: (a, b) => Math.abs(a.tempo - bpm) - Math.abs(b.tempo - bpm),
+        fastest: (a, b) => a.tempo - b.tempo,
+        slowest: (a, b) => b.tempo - a.tempo
+    };
+    return tracks.sort(sorting_methods[sorting_method]);
+}
+
+document.getElementById('get').addEventListener('click', loadTracks);
+document.getElementById('get2').addEventListener('click', loadAudioFeatures);
 // const script = document.createElement("script");
 // script.src = "https://sdk.scdn.co/spotify-player.js";
 // script.async = true;
@@ -136,3 +167,5 @@ document.getElementById('get').addEventListener('click', loadTracks);
 //     window.player = player;
 
 // };
+
+
