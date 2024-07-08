@@ -1,4 +1,4 @@
-import Cookies from 'js-cookie'
+import Cookies from 'js-cookie';
 let tracks = [];
 let features = [];
 
@@ -46,18 +46,17 @@ async function spot(endpoint, options, method = 'GET') {
     }
 }
 
-function getAllPlayListTracks(playlist_id) {
-    return getTracks(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks`);
-}
+const getSavedTracks = () => getAll('https://api.spotify.com/v1/me/tracks');
+const getPlaylists = () => getAll('https://api.spotify.com/v1/me/playlists');
+const getPlayListTracks = playlist_id => getAll(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks`);
 
-function getAllSavedTracks() {
-    return getTracks('https://api.spotify.com/v1/me/tracks');
-}
-
-async function* getTracks(endpoint) {
-    let MAX_SPOTIFY_LIMIT = 50;
+/**
+ * Retrieves all items from the specified endpoint in batches.
+ * Returns a generator that yields each batch.
+ */
+async function* getAll(endpoint, step=50) {
     let response = await spot(endpoint, {
-        limit: MAX_SPOTIFY_LIMIT,
+        limit: step,
     });
     yield response;
     while (response.next) {
@@ -69,7 +68,8 @@ async function* getTracks(endpoint) {
 async function loadTracks() {
     document.getElementById('status').innerHTML = 'Loading...';
     document.getElementById('get').disabled = true;
-    for await (let { items, total } of getAllSavedTracks('4z8jDyYBtoC21zRoJfSLqL')) {
+    let tracks_generator = select_playlist.value === 'saved' ? getSavedTracks() : getPlayListTracks(select_playlist.value);
+    for await (let { items, total } of tracks_generator) {
         // console.log(items)
         addTracks(items, tracks.length);
         tracks = tracks.concat(items);
@@ -136,6 +136,18 @@ function getTracksByBPM(bpm, tolerance = 5, sorting_method = 'slowest', enable_h
     return tracks.sort(sorting_methods[sorting_method]);
 }
 
+let select_playlist = document.getElementById('select-playlist');
+let playlist_generator = getPlaylists();
+async function loadSomePlaylists() {
+    let playlists = (await playlist_generator.next()).value.items;
+    for (let playlist of playlists) {
+        let option = document.createElement('option');
+        option.value = playlist.id;
+        option.textContent = playlist.name;
+        select_playlist.appendChild(option);
+    }
+}   
+await loadSomePlaylists();
 document.getElementById('get').addEventListener('click', loadTracks);
 document.getElementById('get2').addEventListener('click', loadAudioFeatures);
 
