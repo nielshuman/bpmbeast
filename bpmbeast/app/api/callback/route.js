@@ -8,7 +8,7 @@ export async function GET(req) {
     
     let code = params.get('code') || null;
     if (code === null) {
-        return new Response('Error: No code provided' + a, {status: 400})
+        return new Response('Error: No code provided', {status: 400})
     }
   
     let token = await getAccessToken(code);
