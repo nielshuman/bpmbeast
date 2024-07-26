@@ -70,6 +70,6 @@ export async function* getTracksAudioFeatures(tracks) {
         let response = await spot('https://api.spotify.com/v1/audio-features', {
             ids: ids.slice(i, i + MAX_SPOTIFY_LIMIT).join(',')
         });
-        yield { audio_features: response.audio_features, total: ids.length};
+        yield { items: response.audio_features, total: ids.length};
     }
 }
