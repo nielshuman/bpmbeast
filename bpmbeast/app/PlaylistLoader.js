@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import useAsyncEffect from 'use-async-effect';
-import { getPlaylists, getSavedTracks } from './spotify';
+import { getPlaylists, getSavedTracks, getTracksAudioFeatures } from './spotify';
 
 export function PlaylistSelector() {
     let [playlists, setPlaylists] = useState([{ name: '❤️ Liked Songs', id: 'saved' }])
@@ -32,11 +32,12 @@ export function PlaylistSelector() {
     const [tracks, setTracks] = useState([])
     const [features, setFeatures] = useState([])
     const [loading, setLoading] = useState(false)
+    
     async function loadTracksAndFeatures() {
       setLoading(true);
       await loadTracks();
-      
     }
+
     async function loadTracks() {
       let tracks_generator = getSavedTracks()
       for await (const { items, total } of tracks_generator) {
@@ -44,6 +45,12 @@ export function PlaylistSelector() {
         setProgress(prev => prev + (items.length/total))
       }
     }
+
+    async function loadFeatures() {
+      let features_generator = getTracksAudioFeatures(tracks)
+      console.log(tracks)
+    }
+
 
     if(loading) {
       statusText = `Loading songs... ${Math.floor(progress*100)}%`;
@@ -53,7 +60,7 @@ export function PlaylistSelector() {
   
     return (<>
       <PlaylistSelector />
-      <button disabled={loading} onClick={loadTracks}> Tarp! </button>
+      <button disabled={loading} onClick={loadTracksAndFeatures}> Tarp! </button>
       <p>{statusText}</p>
     </>)
   }

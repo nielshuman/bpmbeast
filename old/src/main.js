@@ -38,16 +38,7 @@ function addTracks(items, counter) {
     }
 }
 
-async function* getTracksAudioFeatures(tracks) {
-    let MAX_SPOTIFY_LIMIT = 100;
-    let ids = tracks.map(track => track.track.id);
-    for (let i = 0; i < ids.length; i += MAX_SPOTIFY_LIMIT) {
-        let response = await spot('https://api.spotify.com/v1/audio-features', {
-            ids: ids.slice(i, i + MAX_SPOTIFY_LIMIT).join(',')
-        });
-        yield { audio_features: response.audio_features, total: ids.length};
-    }
-}
+
 
 async function loadAudioFeatures() {
     document.getElementById('status2').innerHTML = 'Loading...';

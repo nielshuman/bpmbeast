@@ -62,3 +62,14 @@ async function* getAll(endpoint, step=50) {
 export const getSavedTracks = () => getAll('https://api.spotify.com/v1/me/tracks');
 export const getPlaylists = () => getAll('https://api.spotify.com/v1/me/playlists');
 export const getPlayListTracks = playlist_id => getAll(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks`);
+
+export async function* getTracksAudioFeatures(tracks) {
+    let MAX_SPOTIFY_LIMIT = 100;
+    let ids = tracks.map(track => track.track.id);
+    for (let i = 0; i < ids.length; i += MAX_SPOTIFY_LIMIT) {
+        let response = await spot('https://api.spotify.com/v1/audio-features', {
+            ids: ids.slice(i, i + MAX_SPOTIFY_LIMIT).join(',')
+        });
+        yield { audio_features: response.audio_features, total: ids.length};
+    }
+}
