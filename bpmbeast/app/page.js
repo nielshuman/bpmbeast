@@ -10,6 +10,8 @@ import SongFinder, { TempoSelector } from "./SongFinder";
 export default function Home() {
   return <main>
     <LoginBar />
+    <hr></hr>
+    <br></br>
     <SongFinder />
     {/* <TempoSelector></TempoSelector> */}
   </main>

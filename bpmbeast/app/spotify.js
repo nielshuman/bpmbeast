@@ -85,8 +85,8 @@ export function getTracksByBPM(features, bpm, {tolerance, sorting_method, enable
     });
     const sorting_methods = {
         closest: (a, b) => Math.abs(a.tempo - bpm) - Math.abs(b.tempo - bpm),
-        fastest: (a, b) => a.tempo - b.tempo,
-        slowest: (a, b) => b.tempo - a.tempo
+        slowest: (a, b) => a.tempo - b.tempo,
+        fastest: (a, b) => b.tempo - a.tempo
     };
     return tracks.sort(sorting_methods[sorting_method]);
 }

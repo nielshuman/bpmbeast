@@ -12,7 +12,7 @@ export default function SongFinder() {
   const [loading, setLoading] = useState(false)
   const [playlistId, setPlaylistId] = useState('saved')
   const [tempo, setTempo] = useState(100)
-  const [foundFeatures, setFoundFeatures] = useState([])
+  // const [foundFeatures, setFoundFeatures] = useState([])
   const [options, setOptions] = useState({
     tolerance: 5,
     enable_half_and_double_time: true,
@@ -50,6 +50,8 @@ export default function SongFinder() {
   }
   
   const statusText = loading ? `${status} (${Math.floor(progress * 100)}%)` : `Ready (${features.length} tracks loaded)`
+  let foundFeatures = getTracksByBPM(features, tempo, options)
+  
   return (<>
     <PlaylistSelector onChange={e => setPlaylistId(e.target.value)}/>
     {/* <p>selected playlist: {playlistId}</p> */}
@@ -58,7 +60,7 @@ export default function SongFinder() {
     <TempoSelector value={tempo} setValue={setTempo} />
     <hr></hr>
     <SearchOptions options={options} setOptions={setOptions}/>
-    <button onClick={()=>setFoundFeatures(getTracksByBPM(features, tempo, options))}>Search song!</button>
+    {/* <button onClick={()=>setFoundFeatures(getTracksByBPM(features, tempo, options))}>Search song!</button> */}
     <hr></hr>
     <div>
       {foundFeatures.map(feature => <a key={feature.id} href={feature.track_href}> {feature.tempo} </a>)}
@@ -78,7 +80,6 @@ function SearchOptions({options, setOptions}) {
       {...options, tolerance: Number(e.target.value)}))} />
     <input type='checkbox' checked={options.enable_half_and_double_time} onChange={e => setOptions(options => (
       {...options, enable_half_and_double_time: !options.enable_half_and_double_time}))} />
-    <p>{JSON.stringify(options)}</p>
   </div>
 }
 
