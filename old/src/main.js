@@ -52,22 +52,6 @@ async function loadAudioFeatures() {
     console.log(features);
 }
 
-function getTracksByBPM(bpm, tolerance = 5, sorting_method = 'slowest', enable_half_and_double_time = true) {
-    let tracks = features.filter(feature => {
-        let tempo = feature.tempo;
-        let full_time_matches = (Math.abs(tempo - bpm) <= tolerance);
-        let half_time_matches = (Math.abs(tempo / 2 - bpm) <= tolerance);
-        let double_time_matches = (Math.abs(tempo * 2 - bpm) <= tolerance); 
-        return full_time_matches || (enable_half_and_double_time && (half_time_matches || double_time_matches));
-    });
-    
-    const sorting_methods = {
-        closest: (a, b) => Math.abs(a.tempo - bpm) - Math.abs(b.tempo - bpm),
-        fastest: (a, b) => a.tempo - b.tempo,
-        slowest: (a, b) => b.tempo - a.tempo
-    };
-    return tracks.sort(sorting_methods[sorting_method]);
-}
 
 let select_playlist = document.getElementById('select-playlist');
 let playlist_generator = getPlaylists();

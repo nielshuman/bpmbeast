@@ -73,3 +73,20 @@ export async function* getTracksAudioFeatures(tracks) {
         yield { items: response.audio_features, total: ids.length};
     }
 }
+
+export function getTracksByBPM(features, bpm, {tolerance, sorting_method, enable_half_and_double_time}) {
+    console.log(features, bpm, tolerance, sorting_method, enable_half_and_double_time);
+    let tracks = features.filter(feature => {
+        let tempo = feature.tempo;
+        let full_time_matches = (Math.abs(tempo - bpm) <= tolerance);
+        let half_time_matches = (Math.abs(tempo / 2 - bpm) <= tolerance);
+        let double_time_matches = (Math.abs(tempo * 2 - bpm) <= tolerance); 
+        return full_time_matches || (enable_half_and_double_time && (half_time_matches || double_time_matches));
+    });
+    const sorting_methods = {
+        closest: (a, b) => Math.abs(a.tempo - bpm) - Math.abs(b.tempo - bpm),
+        fastest: (a, b) => a.tempo - b.tempo,
+        slowest: (a, b) => b.tempo - a.tempo
+    };
+    return tracks.sort(sorting_methods[sorting_method]);
+}
