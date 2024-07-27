@@ -41,18 +41,19 @@ export default function PlaylistLoader() {
       features.push(...items);
       setProgress(features.length / total)
     }
+    return features;
   }
 
   return (<>
     <PlaylistSelector onChange={e => setPlaylistId(e.target.value)}/>
-    <button disabled={loading} onClick={loadTracksAndFeatures}> Tarp! </button>
-    <p>{loading ? `${status} (${Math.floor(progress * 100)}%)` : 'Ready'}</p>
-    <progress value={progress} max={1}></progress>
     <p>selected playlist: {playlistId}</p>
+    <button disabled={loading} onClick={loadTracksAndFeatures}> Tarp! </button>
+    <p>{loading ? `${status} (${Math.floor(progress * 100)}%)` : `Ready (${features.length} tracks loaded)`}</p>
+    <progress value={progress} max={1}></progress>
   </>)
 }
 
-export function PlaylistSelector({ onChange }) {
+function PlaylistSelector({ onChange }) {
   let [playlists, setPlaylists] = useState([{ name: '❤️ Liked Songs', id: 'saved' }])
   useAsyncEffect(async () => {
     for await (const { items } of getPlaylists()) {
@@ -72,4 +73,14 @@ export function PlaylistSelector({ onChange }) {
       <option key={playlist.id} value={playlist.id}>{playlist.name}</option>
     )}
   </select>
+}
+
+export function TempoSelector() {
+  const [value, setValue] = useState(100);
+  return <>
+    <p>{value}</p>
+    <input type="number" value={value} onChange={e=>setValue(Number(e.target.value))}></input>
+    <button onClick={() => setValue(prev => prev-1)}>-</button>
+    <button onClick={() => setValue(prev => prev+1)}>+</button>
+  </>
 }
