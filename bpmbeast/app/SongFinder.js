@@ -1,69 +1,26 @@
 'use client';
 import { useState, useEffect } from 'react';
 import useAsyncEffect from 'use-async-effect';
-import { getPlayListTracks, getPlaylists, getSavedTracks, getTracksAudioFeatures, getTracksByBPM } from './spotify';
+import { getPlayListTracks, getPlaylists, getSavedTracks, getTracksAudioFeatures, getTracksByTempo } from './spotify';
 
 export default function SongFinder() {
-  // const [statusText, setStatusText] = useState('Ready');
-  // let statusText;
-  const [progress, setProgress] = useState(0)
-  const [status, setStatus] = useState('Ready')
-  const [features, setFeatures] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [playlistId, setPlaylistId] = useState('saved')
-  const [tempo, setTempo] = useState(100)
-  // const [foundFeatures, setFoundFeatures] = useState([])
   const [options, setOptions] = useState({
     tolerance: 5,
     enable_half_and_double_time: true,
     sorting_method: 'slowest'
   })
-  async function loadTracksAndFeatures() {
-    setLoading(true);
-    setStatus('Loading songs...')
-    let tracks = await loadTracks();
-    setStatus('Loading features...')
-    setFeatures(await loadFeatures(tracks));
-    setLoading(false);
-  }
-
-  async function loadTracks() {
-    let tracks_generator = playlistId === 'saved' ? getSavedTracks() : getPlayListTracks(playlistId)
-    let tracks = []
-    for await (const { items, total } of tracks_generator) {
-      // setTracks(prev => [...prev, ...items])
-      tracks.push(...items);
-      setProgress(tracks.length / total)
-    }
-    return tracks;
-  }
-
-  async function loadFeatures(tracks) {
-    let features_generator = getTracksAudioFeatures(tracks)
-    let features = [];
-    for await (const { items, total } of features_generator) {
-      // setFeatures(prev => [...prev, ...items])
-      features.push(...items);
-      setProgress(features.length / total)
-    }
-    return features;
-  }
-  
-  const statusText = loading ? `${status} (${Math.floor(progress * 100)}%)` : `Ready (${features.length} tracks loaded)`
-  let foundFeatures = getTracksByBPM(features, tempo, options)
-  
+  const [tracks, setTracks] = useState([])
+  const [targetTempo, setTargetTempo] = useState(100)
+  let foundTracks = getTracksByTempo(tracks, targetTempo, options)
   return (<>
-    <PlaylistSelector onChange={e => setPlaylistId(e.target.value)}/>
-    {/* <p>selected playlist: {playlistId}</p> */}
-    <PlaylistLoader onClick={loadTracksAndFeatures} loading={loading} statusText={statusText} progress={progress}/>
+    <PlaylistLoader setTracks={setTracks}/>
     <hr></hr>
-    <TempoSelector value={tempo} setValue={setTempo} />
-    <hr></hr>
+    <TempoSelector value={targetTempo} setValue={setTargetTempo} />
     <SearchOptions options={options} setOptions={setOptions}/>
-    {/* <button onClick={()=>setFoundFeatures(getTracksByBPM(features, tempo, options))}>Search song!</button> */}
-    <hr></hr>
     <div>
-      {foundFeatures.map(feature => <a key={feature.id} href={feature.track_href}> {feature.tempo} </a>)}
+      {foundTracks.map(track => <>
+        <Track key={track.id} track={track}></Track>
+      </>)}
     </div>
   </>)
 }
@@ -83,28 +40,70 @@ function SearchOptions({options, setOptions}) {
   </div>
 }
 
-function PlaylistLoader({loading, statusText, onClick, progress}) {
+function PlaylistLoader({setTracks}) {
+  const [playlistId, setPlaylistId] = useState('saved');
+  const [status, setStatus] = useState({
+    loading: false,
+    text: 'Ready',
+    progress: 0
+  })
+
+  async function loadTracksWithFeatures() {
+    setStatus({loading: true, text: 'Loading tracks...', progress: 0})
+    let tracks = await loadTracks();
+    setStatus({loading: true, text: 'Loading features...', progress: 0})
+    let features = await loadFeatures(tracks);
+    console.log(tracks, features)
+    for (let track of tracks) {
+      track.features = features.find(f => f.id === track.id);
+    }
+    setTracks(tracks);
+    setStatus({loading: false,text: 'Done',progress: 0})
+  }
+
+  async function loadTracks() {
+    let tracks_generator = playlistId === 'saved' ? getSavedTracks() : getPlayListTracks(playlistId)
+    let tracks = []
+    for await (const { items, total } of tracks_generator) {
+      // setTracks(prev => [...prev, ...items])
+      for (let item of items) {
+        tracks.push(item.track)
+      }
+      // setProgress(tracks.length / total)
+      setStatus(prev => ({...prev, progress: tracks.length / total}))
+    }
+    return tracks;
+  }
+
+  async function loadFeatures(tracks) {
+    let features_generator = getTracksAudioFeatures(tracks)
+    let features = [];
+    for await (const { items, total } of features_generator) {
+      // setFeatures(prev => [...prev, ...items])
+      features.push(...items);
+      // setProgress(features.length / total)
+      setStatus(prev => ({...prev, progress: features.length / total}))
+    }
+    return features;
+  }
+
+
   return <>
-    <button disabled={loading} onClick={onClick}> Tarp! </button>
-    <p>{statusText}</p>
-    <progress value={progress} max={1}></progress>
+    <PlaylistSelector onChange={e => setPlaylistId(e.target.value)}></PlaylistSelector>
+    <button disabled={status.loading} onClick={loadTracksWithFeatures}> Tarp! </button>
+    <p>{status.text} {status.loading? `(${Math.floor(status.progress*100)}%)` : ''}</p>
+    <progress value={status.progress} max={1}></progress>
   </>
 }
 
 function PlaylistSelector({ onChange }) {
   let [playlists, setPlaylists] = useState([{ name: '❤️ Liked Songs', id: 'saved' }])
+  
   useAsyncEffect(async () => {
     for await (const { items } of getPlaylists()) {
       setPlaylists(prev => { return [...prev, ...items]; })
     }
   }, [])
-  // useEffect(() => {(async ()=> {
-  //   // window.getPlaylists = getPlaylists  
-  //   for await (const {items} of getPlaylists()) {
-  //     // setPlaylists(prev => {return [...prev, ...items];})
-  //     console.log(items)
-  //   }
-  // })()}, [])
 
   return <select onChange={onChange}>
     {playlists.map(playlist =>
@@ -122,4 +121,11 @@ function TempoSelector({value, setValue}) {
     <button onClick={() => setValue(prev => prev+1)}>+</button>
     <h3>{value} BPM</h3>
   </>
+}
+
+function Track({track}) {
+  return <div style={{display: 'flex'}}>
+    <img height="50px" src={track.album.images[0].url} alt={track.name} />
+    <h3>{track.name} - {track.features.tempo} BPM</h3>
+  </div>
 }
