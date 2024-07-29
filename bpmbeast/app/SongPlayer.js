@@ -3,6 +3,7 @@
 import Cookies from "js-cookie";
 import { useState, useEffect } from "react";
 import styles from './SongPlayer.module.css';
+import { spot } from './spotify';
 
 const dummyTrack = {
     name: "No song playing",
@@ -77,6 +78,14 @@ export default function SongPlayer({token}) {
         };
     }, []);
 
+    function playSomething() {
+        spot('https://api.spotify.com/v1/me/player/play', {
+            device_id: deviceId,
+        }, 'PUT', {
+            uris: ['spotify:track:1JSTJqkT5qHq8MDJnJbRE1']
+        });
+    }
+
     return (
         <>
             <h1 style={{textAlign: 'center'}}>{ready? "Ready" : "Not ready"}</h1>
@@ -96,6 +105,7 @@ export default function SongPlayer({token}) {
                     </div>
                 </div>
             </div>
+            <button onClick={playSomething}>Play something</button>
          </>
     )
 

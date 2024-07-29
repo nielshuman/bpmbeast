@@ -1,7 +1,7 @@
 'use client';
 import Cookies from 'js-cookie';
 
-async function spot(endpoint, options, method = 'GET') {
+export async function spot(endpoint, options, method = 'GET', body = null) {
     if (Cookies.get('access_token') === undefined) {
         throw new Error('Not logged in')
     }
@@ -16,7 +16,8 @@ async function spot(endpoint, options, method = 'GET') {
         method: method,
         headers: {
             'Authorization': 'Bearer ' + Cookies.get('access_token')
-        }
+        },
+        body: body? JSON.stringify(body) : null 
     });
     
     if (response.status === 401) {
