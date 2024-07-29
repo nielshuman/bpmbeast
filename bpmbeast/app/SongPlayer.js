@@ -2,16 +2,17 @@
 
 import Cookies from "js-cookie";
 import { useState, useEffect } from "react";
+import styles from './SongPlayer.module.css';
 
-const track = {
-    name: "",
+const dummyTrack = {
+    name: "No song playing",
     album: {
         images: [
-            { url: "" }
+            { url: "/album_placeholder.png" }
         ]
     },
     artists: [
-        { name: "" }
+        { name: "By no one" }
     ]
 }
 
@@ -23,7 +24,7 @@ export default function SongPlayer({token}) {
 
     const [is_paused, setPaused] = useState(false);
     const [is_active, setActive] = useState(false);
-    const [current_track, setTrack] = useState(track);
+    const [current_track, setTrack] = useState(dummyTrack);
 
     useEffect(() => {
         const script = document.createElement("script");
@@ -75,20 +76,21 @@ export default function SongPlayer({token}) {
             return cleanup;
         };
     }, []);
+
     return (
         <>
-            <div className="container">
-            {ready ? <h1>Ready to play</h1> : <h1>Not ready</h1>}
-                <div className="main-wrapper">
+            <h1 style={{textAlign: 'center'}}>{ready? "Ready" : "Not ready"}</h1>
+            <div className={styles.container}>
+                <div className={styles.main_wrapper}>
                     <img src={current_track.album.images[0].url} 
-                         className="now-playing__cover" alt="" />
+                         className={styles.now_playing__cover} alt="" />
     
-                    <div className="now-playing__side">
-                        <div className="now-playing__name">{
+                    <div className={styles.now_playing__side}>
+                        <div className={styles.now_playing__name}>{
                                       current_track.name
                                       }</div>
     
-                        <div className="now-playing__artist">{
+                        <div className={styles.now_playing__artist}>{
                                       current_track.artists[0].name
                                       }</div>
                     </div>

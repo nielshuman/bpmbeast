@@ -1,0 +1,54 @@
+.main_wrapper {
+    padding-top: 45px;
+    padding-bottom: 45px;
+    align-items: center;
+    display: flex;
+    height: 100%;
+    margin: 0 auto;
+    justify-content: center;
+    position: relative;
+    width: 80%;
+    z-index: 1;
+    background-color: #333;
+    color: white;
+    font-family: sans-serif;
+    border-radius: 20px;
+  }
+  
+  .container {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    height: 100%;
+  }
+  
+  .main_container {
+    flex: 1;
+  }
+  
+  .now_playing__name {
+    font-size: 1.5em;
+    margin-bottom: 0.2em;
+  }
+  
+  .now_playing__artist {
+    margin-bottom: 1em;
+  }
+  
+  .now_playing__status {
+    margin-bottom: 1em;
+  }
+  
+  .now_playing__cover {
+    border-radius: 20px;
+    float: left;
+    margin-right: 10px;
+    text-align: right;
+    width: 300px;
+    height: 300px;
+  }
+  
+  .now_playing__side {
+    margin-left: 2%;
+    width: 45%;
+  }
