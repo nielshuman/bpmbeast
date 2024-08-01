@@ -3,18 +3,18 @@ import { useState, useEffect } from 'react';
 import useAsyncEffect from 'use-async-effect';
 import { getPlayListTracks, getPlaylists, getSavedTracks, getTracksAudioFeatures, getTracksByTempo } from './spotify';
 
-export default function SongFinder() {
+export default function SongFinder({tracks, setResults}) {
   const [options, setOptions] = useState({
     tolerance: 5,
     enable_half_and_double_time: true,
     sorting_method: 'slowest'
   })
-  const [tracks, setTracks] = useState([])
+  // const [tracks, setTracks] = useState([])
   const [targetTempo, setTargetTempo] = useState(100)
   let foundTracks = getTracksByTempo(tracks, targetTempo, options)
+  // setResults(foundTracks)
+  
   return (<>
-    <PlaylistLoader setTracks={setTracks}/>
-    <hr></hr>
     <TempoSelector value={targetTempo} setValue={setTargetTempo} />
     <SearchOptions options={options} setOptions={setOptions}/>
     <div>
@@ -40,7 +40,7 @@ function SearchOptions({options, setOptions}) {
   </div>
 }
 
-function PlaylistLoader({setTracks}) {
+export function PlaylistLoader({setTracks}) {
   const [playlistId, setPlaylistId] = useState('saved');
   const [status, setStatus] = useState({
     loading: false,

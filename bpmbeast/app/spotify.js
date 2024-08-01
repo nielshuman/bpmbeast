@@ -91,3 +91,21 @@ export function getTracksByTempo(tracks, targetTempo, {tolerance, sorting_method
     };
     return foundTracks.sort(sorting_methods[sorting_method]);
 }
+
+
+export function webPlaybackSDK() {
+    return new Promise(resolve => {
+        const script = document.createElement("script");
+        script.src = "https://sdk.scdn.co/spotify-player.js";
+        script.async = true;
+        document.body.appendChild(script);    
+
+        window.onSpotifyWebPlaybackSDKReady = () => {
+            resolve(window.Spotify)
+        }
+    })
+}
+
+export async function startPlayback(device_id, body) {
+    return await spot('https://api.spotify.com/v1/me/player/play', { device_id }, 'PUT', body);
+}

@@ -3,7 +3,8 @@
 import Cookies from "js-cookie";
 import { useState, useEffect } from "react";
 import styles from './SongPlayer.module.css';
-import { spot } from './spotify';
+import { spot, startPlayback, webPlaybackSDK } from './spotify';
+import useAsyncEffect from "use-async-effect";
 
 const dummyTrack = {
     name: "No song playing",
@@ -18,7 +19,7 @@ const dummyTrack = {
 }
 
 
-export default function SongPlayer({token}) {
+export default function SongPlayer({tracks}) {
     const [player, setPlayer] = useState(undefined)
     const [deviceId, setDeviceId] = useState(undefined)
     const [ready, setReady] = useState(false)
@@ -27,63 +28,49 @@ export default function SongPlayer({token}) {
     const [is_active, setActive] = useState(false);
     const [current_track, setTrack] = useState(dummyTrack);
 
-    useEffect(() => {
-        const script = document.createElement("script");
-        script.src = "https://sdk.scdn.co/spotify-player.js";
-        script.async = true;
-        document.body.appendChild(script);
+    useAsyncEffect(async () => {
+        const { Player } = await webPlaybackSDK()
+        const player = new Player({
+            name: 'BPM Beast',
+            getOAuthToken: cb => { cb(Cookies.get('access_token')); },
+            volume: 0.5
+        });
 
-        window.onSpotifyWebPlaybackSDKReady = () => {
-            window.cookies = Cookies;
-            const player = new window.Spotify.Player({
-                name: 'BPM Beast',
-                getOAuthToken: cb => { cb(Cookies.get('access_token')); },
-                volume: 0.5
-            });
+        setPlayer(player);
 
-            setPlayer(player);
+        player.addListener('ready', ({ device_id }) => {
+            console.log('Ready with Device ID', device_id);
+            setDeviceId(device_id);
+            setReady(true);
+        });
 
-            player.addListener('ready', ({ device_id }) => {
-                console.log('Ready with Device ID', device_id);
-                setDeviceId(device_id);
-                setReady(true);
-            });
+        player.addListener('not_ready', ({ device_id }) => {
+            console.log('Device ID has gone offline', device_id);
+            setReady(false);
+        });
 
-            player.addListener('not_ready', ({ device_id }) => {
-                console.log('Device ID has gone offline', device_id);
-                setReady(false);
-            });
+        player.addListener('player_state_changed', ( state => {
 
-            player.addListener('player_state_changed', ( state => {
-
-                if (!state) {
-                    return;
-                }
-            
-                setTrack(state.track_window.current_track);
-                setPaused(state.paused);
-            
-            
-                player.getCurrentState().then( state => { 
-                    (!state)? setActive(false) : setActive(true) 
-                });
-            
-            }));
-
-            player.connect();
-            function cleanup() {
-                player.disconnect();
+            if (!state) {
+                return;
             }
-            return cleanup;
-        };
+        
+            setTrack(state.track_window.current_track);
+            setPaused(state.paused);
+        
+        
+            player.getCurrentState().then( state => { 
+                (!state)? setActive(false) : setActive(true) 
+            });
+        
+        }));
+
+        player.connect();
+        return player.disconnect;
     }, []);
 
     function playSomething() {
-        spot('https://api.spotify.com/v1/me/player/play', {
-            device_id: deviceId,
-        }, 'PUT', {
-            uris: ['spotify:track:1JSTJqkT5qHq8MDJnJbRE1']
-        });
+        startPlayback(deviceId, {uris: ['spotify:track:1JSTJqkT5qHq8MDJnJbRE1']})
     }
 
     return (
@@ -105,7 +92,7 @@ export default function SongPlayer({token}) {
                     </div>
                 </div>
             </div>
-            <button onClick={playSomething}>Play something</button>
+            <button onClick={playSomething}> a </button>
          </>
     )
 
