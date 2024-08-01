@@ -3,29 +3,7 @@ import { useState, useEffect } from 'react';
 import useAsyncEffect from 'use-async-effect';
 import { getPlayListTracks, getPlaylists, getSavedTracks, getTracksAudioFeatures, getTracksByTempo } from './spotify';
 
-export default function SongFinder({tracks, setResults}) {
-  const [options, setOptions] = useState({
-    tolerance: 5,
-    enable_half_and_double_time: true,
-    sorting_method: 'slowest'
-  })
-  // const [tracks, setTracks] = useState([])
-  const [targetTempo, setTargetTempo] = useState(100)
-  let foundTracks = getTracksByTempo(tracks, targetTempo, options)
-  // setResults(foundTracks)
-  
-  return (<>
-    <TempoSelector value={targetTempo} setValue={setTargetTempo} />
-    <SearchOptions options={options} setOptions={setOptions}/>
-    <div>
-      {foundTracks.map(track => <>
-        <Track key={track.id} track={track}></Track>
-      </>)}
-    </div>
-  </>)
-}
-
-function SearchOptions({options, setOptions}) {
+export function SearchOptions({options, setOptions}) {
   return <div>
     <select value={options.sorting_method} onChange={e => setOptions(options => (
       {...options, sorting_method: e.target.value}))}>
@@ -96,7 +74,7 @@ export function PlaylistLoader({setTracks}) {
   </>
 }
 
-function PlaylistSelector({ onChange }) {
+export function PlaylistSelector({ onChange }) {
   let [playlists, setPlaylists] = useState([{ name: '❤️ Liked Songs', id: 'saved' }])
   
   useAsyncEffect(async () => {
@@ -113,7 +91,7 @@ function PlaylistSelector({ onChange }) {
 
 }
 
-function TempoSelector({value, setValue}) {
+export function TempoSelector({value, setValue}) {
   // const [value, setValue] = useState(100);
   return <>
     <input type="number" value={value} onChange={e=>setValue(Number(e.target.value))}></input>
@@ -123,7 +101,7 @@ function TempoSelector({value, setValue}) {
   </>
 }
 
-function Track({track}) {
+export function Track({track}) {
   return <div style={{display: 'flex'}}>
     <img height="50px" src={track.album.images[0].url} alt={track.name} />
     <h3>{track.name} - {track.features.tempo} BPM</h3>

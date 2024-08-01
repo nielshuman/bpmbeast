@@ -69,9 +69,16 @@ export default function SongPlayer({tracks}) {
         return player.disconnect;
     }, []);
 
-    function playSomething() {
-        startPlayback(deviceId, {uris: ['spotify:track:1JSTJqkT5qHq8MDJnJbRE1']})
-    }
+
+    useEffect(() => {
+        console.table({player, deviceId, tracks});
+        if (player && deviceId && tracks.length) {
+            startPlayback(deviceId, {uris: tracks.map(track => track.uri)})
+        }
+    }, [player, deviceId, tracks]);
+    // function playSomething() {
+    //     startPlayback(deviceId, {uris: ['spotify:track:1JSTJqkT5qHq8MDJnJbRE1']})
+    // }
 
     return (
         <>
@@ -92,7 +99,7 @@ export default function SongPlayer({tracks}) {
                     </div>
                 </div>
             </div>
-            <button onClick={playSomething}> a </button>
+            <button > a </button>
          </>
     )
 
