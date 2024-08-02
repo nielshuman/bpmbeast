@@ -81,7 +81,7 @@ export function getTracksByTempo(tracks, targetTempo, {tolerance, sorting_method
         let tempo = track.features.tempo;
         let full_time_matches = (Math.abs(tempo - targetTempo) <= tolerance);
         let half_time_matches = (Math.abs(tempo / 2 - targetTempo) <= tolerance);
-        let double_time_matches = (Math.abs(tempo * 2 - targetTempo) <= tolerance); 
+        let double_time_matches = (Math.abs(tempo * 2 - targetTempo) <= tolerance);
         return full_time_matches || (enable_half_and_double_time && (half_time_matches || double_time_matches));
     });
     const sorting_methods = {

@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import querystring from 'querystring';
 import crypto from 'crypto';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
     redirect('https://accounts.spotify.com/authorize?' +
     querystring.stringify({

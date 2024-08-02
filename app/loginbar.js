@@ -1,8 +1,5 @@
-import { cookies } from "next/headers"
 
-export function LoginBar() {
-    let logged_in = Boolean(cookies().get('access_token'))
-  
+export function LoginBar({logged_in}) {  
     return <div>
       <div>
         {logged_in ? 'Logged in' : 'Not logged in'}
