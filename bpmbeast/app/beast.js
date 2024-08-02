@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SongFinder, { SearchOptions, TempoSelector, Track } from "./SongFinder";
 import { PlaylistLoader } from "./SongFinder";
 import SongPlayer from "./SongPlayer";
@@ -8,30 +8,34 @@ import { getTracksByTempo } from "./spotify";
 
 export default function Beast () {
     const [tracks, setTracks] = useState([])
-    // const [results, setResults] = useState([])
+    useEffect(() => setTracks(JSON.parse(localStorage.getItem('tracks') || '[]')), [])
     const [searchOptions, setSearchOptions] = useState({
-        tolerance: 5,
-        enable_half_and_double_time: true,
+        tolerance: 2,
+        enable_half_and_double_time: false,
         sorting_method: 'slowest'
       })
     const [targetTempo, setTargetTempo] = useState(100)
 
-    let results = getTracksByTempo(tracks, targetTempo, searchOptions)
+    const tracks_loaded = Boolean(tracks.length)
+    const results = getTracksByTempo(tracks, targetTempo, searchOptions)
 
     
     return <> 
-    { tracks.length? 
+    { tracks_loaded? 
         <>
             <TempoSelector value={targetTempo} setValue={setTargetTempo} />
             <SearchOptions options={searchOptions} setOptions={setSearchOptions}/>
+            <SongPlayer tracks={results}/> 
             <div>
             {results.map(track => <>
                 <Track key={track.id} track={track}></Track>
             </>)}
             </div>
-            <SongPlayer tracks={results}/> 
         </>
-        : <PlaylistLoader setTracks={setTracks}/> 
+        : <PlaylistLoader setTracks={tracks => {
+            setTracks(tracks);
+            localStorage.setItem('tracks', JSON.stringify(tracks));
+        }}/> 
         }
     </> 
 }

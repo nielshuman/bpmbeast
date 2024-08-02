@@ -14,7 +14,7 @@ const dummyTrack = {
         ]
     },
     artists: [
-        { name: "By no one" }
+        { name: "-" }
     ]
 }
 
@@ -73,7 +73,9 @@ export default function SongPlayer({tracks}) {
     useEffect(() => {
         console.table({player, deviceId, tracks});
         if (player && deviceId && tracks.length) {
-            startPlayback(deviceId, {uris: tracks.map(track => track.uri)})
+            if (current_track.uri !== tracks[0].uri) {
+                startPlayback(deviceId, {uris: tracks.map(track => track.uri)})
+            }
         }
     }, [player, deviceId, tracks]);
     // function playSomething() {
@@ -99,7 +101,7 @@ export default function SongPlayer({tracks}) {
                     </div>
                 </div>
             </div>
-            <button > a </button>
+            <button onClick={()=> {player.nextTrack()}}>Next</button>
          </>
     )
 
