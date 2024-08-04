@@ -1,0 +1,40 @@
+.btn {
+    border-radius: 1rem;
+    display: flex;
+    justify-content: center;
+    /* cursor:pointer; */
+    color:#ffffff;
+    font-family:sans-serif;
+    font-size:17px;
+    font-weight: bold;
+    
+    /* padding:16px 31px; */
+    padding: 10px;
+    text-decoration:none;
+}
+
+.btn:hover {
+    
+}
+
+.green {
+  background-color: #1ED760;
+  color: #ffffff;
+}
+
+.black {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
