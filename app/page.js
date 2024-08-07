@@ -18,7 +18,7 @@ export default function Home() {
     <hr>
     </hr>
     {logged_in? <Beast /> : <div>
-      Log in to use the beast <br />
+      Log in to use the beasty beast <br />
       <SpotifyLoginButton.normal href={'/api/login'} width={'250px'}/>
     </div>}
   </main>
