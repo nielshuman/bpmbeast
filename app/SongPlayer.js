@@ -74,7 +74,7 @@ export default function SongPlayer({tracks}) {
         console.table({player, deviceId, tracks});
         if (player && deviceId && tracks.length) {
             if (current_track.uri !== tracks[0].uri) {
-                startPlayback(deviceId, {uris: tracks.map(track => track.uri)})
+                // startPlayback(deviceId, {uris: tracks.map(track => track.uri)})
             }
         }
     }, [player, deviceId, tracks]);

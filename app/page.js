@@ -1,10 +1,4 @@
-import Image from "next/image";
-import dynamic from 'next/dynamic'
-// import Cookies from 'js-cookie';
-// import "./globals.css";
 import { LoginBar } from "./components/loginbar";
-import SongFinder, { TempoSelector } from "./SongFinder";
-import SongPlayer from "./SongPlayer"
 import Beast from "./beast";
 import { cookies } from "next/headers"
 import * as SpotifyLoginButton from "./components/SpotifyLoginButton";

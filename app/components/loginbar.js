@@ -2,6 +2,7 @@ import Cookies from "js-cookie";
 import * as SpotifyLoginButton from "./SpotifyLoginButton";
 import s from './loginbar.module.css'  
 import { cookies } from "next/headers";
+import Image from "next/image";
 
 // TODO: Refresh enzo
 
@@ -20,5 +21,9 @@ export async function LoginBar({logged_in}) {
 }
 
 export function UserView({profile}) {
-  return <div> Logged in as {profile.display_name}</div>
+  console.log(profile)
+  return <div className={s.UserView}> 
+      <Image className={s.rounded} src={profile.images[1].url} width={50} height={50}></Image> 
+      <span class={s.userName}> {profile.display_name} </span>
+    </div>
 }
