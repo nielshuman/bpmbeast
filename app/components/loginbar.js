@@ -24,6 +24,6 @@ export function UserView({profile}) {
   console.log(profile)
   return <div className={s.UserView}> 
       <Image className={s.rounded} src={profile.images[1].url} width={50} height={50}></Image> 
-      <span class={s.userName}> {profile.display_name} </span>
+      <span className={s.userName}> {profile.display_name} </span>
     </div>
 }
