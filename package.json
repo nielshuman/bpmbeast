@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@nextui-org/react": "^2.4.6",
+    "@nextui-org/system": "^2.2.5",
+    "@nextui-org/theme": "^2.2.9",
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.2",
     "framer-motion": "^11.3.30",
