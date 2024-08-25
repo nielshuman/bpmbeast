@@ -11,6 +11,11 @@ export default function Home() {
     <LoginBar logged_in={logged_in}/>
     <hr>
     </hr>
+
+    <h1 className="text-3xl font-bold underline">
+      Hello world!
+    </h1>
+    
     {logged_in? <Beast /> : <div>
       Log in to use the beasty beast <br />
       <SpotifyLoginButton.normal href={'/api/login'} width={'250px'}/>
