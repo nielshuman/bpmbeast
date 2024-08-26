@@ -1,6 +1,6 @@
 'use client'; // tijdelijke bugfix
 import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
-import s from './LoginBar.module.css'
+import s from './UserView.module.css'
 import { IoLogOut } from "react-icons/io5";
 export function UserView({profile}) {
     console.log(profile)

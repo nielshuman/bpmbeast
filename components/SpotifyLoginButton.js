@@ -18,3 +18,5 @@ export function small(props) {
     </div>
     </a>
 }
+
+export default {normal, small};

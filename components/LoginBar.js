@@ -1,4 +1,4 @@
-import * as SpotifyLoginButton from "./SpotifyLoginButton";
+import SpotifyLoginButtons from "./SpotifyLoginButton";
 import s from './LoginBar.module.css'  
 import { cookies } from "next/headers";
 import { UserView } from "./UserView";
@@ -15,7 +15,7 @@ export async function LoginBar({logged_in}) {
   return <div className={s.bar}>
     <span> BPM Beast </span>
     {logged_in? <UserView profile={profile} /> 
-    : <SpotifyLoginButton.small href={'/api/login'} width={'100px'}/>}    
+    : <SpotifyLoginButtons.small href={'/api/login'} width={'100px'}/>}    
   </div>
 }
 

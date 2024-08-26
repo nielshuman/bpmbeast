@@ -13,12 +13,16 @@ import { Button, Progress } from "@nextui-org/react";
 
 export default function Home() {
   let logged_in = Boolean(cookies().get('access_token'))
-  return <main className={inter.className}>
+  return <main className={`dark text-foreground bg-background ${inter.className}`}>
       <LoginBar logged_in={logged_in}/>
       <hr />
-      {logged_in? <Beast /> : <div>
+      {logged_in? <Beast /> : <LoginView /> }
+    </main>
+}
+
+function LoginView() {
+  return <div>
         Log in to use the beasty beast <br />
         <SpotifyLoginButton.normal href={'/api/login'} width={'250px'}/>
-      </div>}
-    </main>
+      </div>
 }
