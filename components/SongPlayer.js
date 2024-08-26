@@ -3,7 +3,7 @@
 import Cookies from "js-cookie";
 import { useState, useEffect } from "react";
 import styles from './SongPlayer.module.css';
-import { spot, startPlayback, webPlaybackSDK } from './spotify';
+import { spot, startPlayback, webPlaybackSDK } from '../app/spotify';
 import useAsyncEffect from "use-async-effect";
 
 const dummyTrack = {

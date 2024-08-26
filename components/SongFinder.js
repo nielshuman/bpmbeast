@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import useAsyncEffect from 'use-async-effect';
-import { getPlayListTracks, getPlaylists, getSavedTracks, getTracksAudioFeatures, getTracksByTempo } from './spotify';
+import { getPlayListTracks, getPlaylists, getSavedTracks, getTracksAudioFeatures, getTracksByTempo } from '../app/spotify';
 
 export function SearchOptions({options, setOptions}) {
   return <div>

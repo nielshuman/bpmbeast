@@ -1,4 +1,5 @@
 import { NextUIProvider } from "@nextui-org/react"
+import './globals.css'
 
 export const metadata = {
   title: 'BPM Beast',

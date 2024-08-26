@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import SongFinder, { SearchOptions, TempoSelector, Track } from "./SongFinder";
 import { PlaylistLoader } from "./SongFinder";
 import SongPlayer from "./SongPlayer";
-import { getTracksByTempo } from "./spotify";
+import { getTracksByTempo } from "../app/spotify";
 
 export default function Beast () {
     const [tracks, setTracks] = useState([])
