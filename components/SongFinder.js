@@ -2,8 +2,9 @@
 import { useState, useEffect } from 'react';
 import useAsyncEffect from 'use-async-effect';
 import { getPlayListTracks, getPlaylists, getSavedTracks, getTracksAudioFeatures, getTracksByTempo } from '../app/spotify';
-import { Button, Card, CardBody, Input, Select, SelectItem, Switch } from '@nextui-org/react';
+import { Button, Card, CardBody, CardHeader, Chip, Input, Progress, Select, SelectItem, Switch } from '@nextui-org/react';
 import Image from 'next/image';
+import { IoIosCheckmark, IoIosCheckmarkCircle } from "react-icons/io";
 
 export function SearchOptions({options, setOptions}) {
   return <div>
@@ -72,9 +73,19 @@ export function PlaylistLoader({setTracks}) {
 
   return <>
     <PlaylistSelector onChange={e => setPlaylistId(e.target.value)}></PlaylistSelector>
-    <button disabled={status.loading} onClick={loadTracksWithFeatures}> Tarp! </button>
-    <p>{status.text} {status.loading? `(${Math.floor(status.progress*100)}%)` : ''}</p>
-    <progress value={status.progress} max={1}></progress>
+    <Button disabled={status.loading} onClick={loadTracksWithFeatures}> Tarp! </Button>
+    <Card>
+      <CardHeader>
+        <div className="flex items-center space-x-3">
+          <Chip color="success" variant="faded" startContent={<IoIosCheckmarkCircle /> } >1. Loading your tracks </Chip>
+          <Chip variant='bordered' color='kjbdas'>2. Getting their BPM information </Chip>
+        </div>
+      </CardHeader>
+      <CardBody>
+        {status.text} {status.loading? `(${Math.floor(status.progress*100)}%)` : ''}
+        <Progress value={status.progress} minValue={0} maxValue={1}></Progress>
+      </CardBody>
+    </Card>
   </>
 }
 
@@ -87,11 +98,11 @@ export function PlaylistSelector({ onChange }) {
     }
   }, [])
 
-  return <select onChange={onChange}>
+  return <Select onChange={onChange}>
     {playlists.map(playlist =>
       <SelectItem key={playlist.id} value={playlist.id}>{playlist.name}</SelectItem>
     )}
-  </select>
+  </Select>
 
 }
 
