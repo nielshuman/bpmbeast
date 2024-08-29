@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import SongFinder, { SearchOptions, TempoSelector, Track } from "./SongFinder";
+import { SearchOptions, TempoSelector } from "./SongFinder";
 import { PlaylistLoader } from "./SongFinder";
 import SongPlayer from "./SongPlayer";
 import { getTracksByTempo } from "../app/spotify";
+import Queue from "./Queue";
 
 export default function Beast () {
     const [tracks, setTracks] = useState([])
@@ -25,12 +26,8 @@ export default function Beast () {
         <>
             <TempoSelector value={targetTempo} setValue={setTargetTempo} />
             <SearchOptions options={searchOptions} setOptions={setSearchOptions}/>
-            <SongPlayer tracks={results}/> 
-            <div>
-            {results.map(track => <>
-                <Track key={track.id} track={track}></Track>
-            </>)}
-            </div>
+            <SongPlayer tracks={results}/>
+            <Queue results={results}/>
         </>
         : <PlaylistLoader setTracks={tracks => {
             setTracks(tracks);

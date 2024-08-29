@@ -15,7 +15,7 @@ export default function Home() {
   let logged_in = Boolean(cookies().get('access_token'))
   return <main className={`dark text-foreground bg-background ${inter.className}`}>
       <LoginBar logged_in={logged_in}/>
-      <hr />
+      
       {logged_in? <Beast /> : <LoginView /> }
     </main>
 }

@@ -2,19 +2,23 @@
 import { useState, useEffect } from 'react';
 import useAsyncEffect from 'use-async-effect';
 import { getPlayListTracks, getPlaylists, getSavedTracks, getTracksAudioFeatures, getTracksByTempo } from '../app/spotify';
+import { Button, Card, CardBody, Input, Select, SelectItem, Switch } from '@nextui-org/react';
+import Image from 'next/image';
 
 export function SearchOptions({options, setOptions}) {
   return <div>
-    <select value={options.sorting_method} onChange={e => setOptions(options => (
+    <Select value={options.sorting_method} onChange={e => setOptions(options => (
       {...options, sorting_method: e.target.value}))}>
-      <option value="slowest">Slowest</option>
-      <option value="fastest">Fastest</option>
-      <option value="closest">Closest</option>
-    </select>
-    <input type='number' value={options.tolerance} onChange={e => setOptions(options => (
+      <SelectItem value="slowest">Slowest</SelectItem>
+      <SelectItem value="fastest">Fastest</SelectItem>
+      <SelectItem value="closest">Closest</SelectItem>
+    </Select>
+    <Input type='number' value={options.tolerance} onChange={e => setOptions(options => (
       {...options, tolerance: Number(e.target.value)}))} />
-    <input type='checkbox' checked={options.enable_half_and_double_time} onChange={e => setOptions(options => (
-      {...options, enable_half_and_double_time: !options.enable_half_and_double_time}))} />
+    <Switch defaultChecked={options.enable_half_and_double_time} onChange={e => setOptions(options => (
+      {...options, enable_half_and_double_time: !options.enable_half_and_double_time}))}>
+        Enable half and double time search
+    </Switch>
   </div>
 }
 
@@ -85,7 +89,7 @@ export function PlaylistSelector({ onChange }) {
 
   return <select onChange={onChange}>
     {playlists.map(playlist =>
-      <option key={playlist.id} value={playlist.id}>{playlist.name}</option>
+      <SelectItem key={playlist.id} value={playlist.id}>{playlist.name}</SelectItem>
     )}
   </select>
 
@@ -94,16 +98,9 @@ export function PlaylistSelector({ onChange }) {
 export function TempoSelector({value, setValue}) {
   // const [value, setValue] = useState(100);
   return <>
-    <input type="number" value={value} onChange={e=>setValue(Number(e.target.value))}></input>
-    <button onClick={() => setValue(prev => prev-1)}>-</button>
-    <button onClick={() => setValue(prev => prev+1)}>+</button>
+    <Input type="number" value={value} onChange={e=>setValue(Number(e.target.value))}></Input>
+    <Button onClick={() => setValue(prev => prev-1)}>-</Button>
+    <Button onClick={() => setValue(prev => prev+1)}>+</Button>
     <h3>{value} BPM</h3>
   </>
-}
-
-export function Track({track}) {
-  return <div style={{display: 'flex'}}>
-    <img height="50px" src={track.album.images[0].url} alt={track.name} />
-    <h3>{track.name} - {track.features.tempo} BPM</h3>
-  </div>
 }
