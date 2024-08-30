@@ -5,6 +5,12 @@ import { getPlayListTracks, getPlaylists, getSavedTracks, getTracksAudioFeatures
 import { Button, Card, CardBody, CardHeader, Chip, Input, Progress, Select, SelectItem, Switch } from '@nextui-org/react';
 import Image from 'next/image';
 import { IoIosCheckmark, IoIosCheckmarkCircle } from "react-icons/io";
+import { color } from 'framer-motion';
+
+const READY = 0;
+const LOADING_TRACKS = 1;
+const LOADING_FEATURES = 2;
+const DONE = 3;
 
 export function SearchOptions({options, setOptions}) {
   return <div>
@@ -27,21 +33,21 @@ export function PlaylistLoader({setTracks}) {
   const [playlistId, setPlaylistId] = useState('saved');
   const [status, setStatus] = useState({
     loading: false,
-    text: 'Ready',
+    stage: READY,
     progress: 0
   })
 
   async function loadTracksWithFeatures() {
-    setStatus({loading: true, text: 'Loading tracks...', progress: 0})
+    setStatus({loading: true, stage: LOADING_TRACKS, progress: 0})
     let tracks = await loadTracks();
-    setStatus({loading: true, text: 'Loading features...', progress: 0})
+    setStatus({loading: true, stage: LOADING_FEATURES, progress: 0})
     let features = await loadFeatures(tracks);
     console.log(tracks, features)
     for (let track of tracks) {
       track.features = features.find(f => f.id === track.id);
     }
     setTracks(tracks);
-    setStatus({loading: false,text: 'Done',progress: 0})
+    setStatus({loading: false, stage: DONE, progress: 1})
   }
 
   async function loadTracks() {
@@ -70,20 +76,26 @@ export function PlaylistLoader({setTracks}) {
     return features;
   }
 
+  const pending = {isDisabled: true}
+  const current = {color: 'primary'}
+  const done = {color: 'success', startContent: <IoIosCheckmarkCircle />}
 
   return <>
     <PlaylistSelector onChange={e => setPlaylistId(e.target.value)}></PlaylistSelector>
-    <Button disabled={status.loading} onClick={loadTracksWithFeatures}> Tarp! </Button>
+    <Button disabled={status.loading} onClick={loadTracksWithFeatures}> Load! </Button>
     <Card>
       <CardHeader>
         <div className="flex items-center space-x-3">
-          <Chip color="success" variant="faded" startContent={<IoIosCheckmarkCircle /> } >1. Loading your tracks </Chip>
-          <Chip variant='bordered' color='kjbdas'>2. Getting their BPM information </Chip>
+          <Chip {...(status.stage < LOADING_TRACKS ? pending : status.stage == LOADING_TRACKS ? current : done)}> 
+            1. Getting your tracks
+          </Chip>
+          <Chip {...(status.stage < LOADING_FEATURES ? pending : status.stage == LOADING_FEATURES ? current : done)}>
+            2. Getting their BPM info
+          </Chip>
         </div>
       </CardHeader>
       <CardBody>
-        {status.text} {status.loading? `(${Math.floor(status.progress*100)}%)` : ''}
-        <Progress value={status.progress} minValue={0} maxValue={1}></Progress>
+        <Progress value={status.progress} minValue={0} maxValue={1} showValueLabel={true}></Progress>
       </CardBody>
     </Card>
   </>

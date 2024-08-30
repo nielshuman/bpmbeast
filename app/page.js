@@ -1,6 +1,6 @@
 import { LoginBar } from "@/components/LoginBar";
-import Beast from "@/components/beast";
-import * as SpotifyLoginButton from "@/components/SpotifyLoginButton";
+import Beast from "@/components/Beast";
+import SpotifyLoginButtons from "@/components/SpotifyLoginButton";
 
 import { cookies } from "next/headers"
 import { Inter } from 'next/font/google'
@@ -23,6 +23,6 @@ export default function Home() {
 function LoginView() {
   return <div>
         Log in to use the beasty beast <br />
-        <SpotifyLoginButton.normal href={'/api/login'} width={'250px'}/>
+        <SpotifyLoginButtons.normal href={'/api/login'} width={'250px'}/>
       </div>
 }

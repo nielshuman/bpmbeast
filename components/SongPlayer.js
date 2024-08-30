@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import styles from './SongPlayer.module.css';
 import { spot, startPlayback, webPlaybackSDK } from '../app/spotify';
 import useAsyncEffect from "use-async-effect";
+import { Button } from "@nextui-org/react";
+import { MdSkipNext } from "react-icons/md";
 
 const dummyTrack = {
     name: "No song playing",
@@ -101,7 +103,7 @@ export default function SongPlayer({tracks}) {
                     </div>
                 </div>
             </div>
-            <button onClick={()=> {player.nextTrack()}}>Next</button>
+            <Button startContent={<MdSkipNext />} onClick={()=> {player.nextTrack()}}>Next</Button>
          </>
     )
 

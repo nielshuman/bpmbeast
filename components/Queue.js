@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function Queue({results}) {
     return <Accordion variant="shadow">
-        <AccordionItem title="Results">
+        <AccordionItem title="Queue">
             {results.map(track => <>
                 <Track key={track.id} track={track}></Track>
             </>)}
