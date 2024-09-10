@@ -25,8 +25,8 @@ export default function Beast () {
     { tracks_loaded? 
         <>
             <TempoSelector value={targetTempo} setValue={setTargetTempo} />
-            <SearchOptions options={searchOptions} setOptions={setSearchOptions}/>
             <SongPlayer tracks={results}/>
+            <SearchOptions options={searchOptions} setOptions={setSearchOptions}/>
             <Queue results={results}/>
         </>
         : <PlaylistLoader setTracks={tracks => {
