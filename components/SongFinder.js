@@ -41,9 +41,11 @@ export function PlaylistLoader({setTracks}) {
     setStatus({loading: true, stage: LOADING_FEATURES, progress: 0})
     let features = await loadFeatures(tracks);
     console.log(tracks, features)
+    features =  features.filter(f => f !== null);
     for (let track of tracks) {
       track.features = features.find(f => f.id === track.id);
     }
+    tracks = tracks.filter(t => t.features !== undefined)    
     setTracks(tracks);
     setStatus({loading: false, stage: DONE, progress: 1})
   }
