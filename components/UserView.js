@@ -4,7 +4,7 @@ import s from './UserView.module.css'
 import { IoLogOut } from "react-icons/io5";
 import { FaExchangeAlt } from "react-icons/fa";
 export function UserView({profile}) {
-    console.log(profile)
+    // console.log(profile)
 
     function onAction(e) {
       console.log(e)
