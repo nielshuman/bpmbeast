@@ -3,8 +3,11 @@
 import Cookies from "js-cookie";
 import { useState, useEffect } from "react";
 import styles from './SongPlayer.module.css';
-import { spot, startPlayback, webPlaybackSDK } from './spotify';
+import { spot, startPlayback, webPlaybackSDK } from '../app/spotify';
 import useAsyncEffect from "use-async-effect";
+import { Button, ButtonGroup, Card, CardBody } from "@nextui-org/react";
+import { MdPause, MdPlayArrow, MdSkipNext } from "react-icons/md";
+import { MdSkipPrevious } from "react-icons/md";
 
 const dummyTrack = {
     name: "No song playing",
@@ -15,7 +18,10 @@ const dummyTrack = {
     },
     artists: [
         { name: "-" }
-    ]
+    ],
+    features: {
+        tempo: 0
+    }
 }
 
 
@@ -28,6 +34,8 @@ export default function SongPlayer({tracks}) {
     const [is_active, setActive] = useState(false);
     const [current_track, setTrack] = useState(dummyTrack);
 
+    current_track.features = tracks.find(track => track.uri === current_track.uri)?.features || dummyTrack.features;
+    
     useAsyncEffect(async () => {
         const { Player } = await webPlaybackSDK()
         const player = new Player({
@@ -71,10 +79,10 @@ export default function SongPlayer({tracks}) {
 
 
     useEffect(() => {
-        console.table({player, deviceId, tracks});
+        // console.table({player, deviceId, tracks});
         if (player && deviceId && tracks.length) {
             if (current_track.uri !== tracks[0].uri) {
-                // startPlayback(deviceId, {uris: tracks.map(track => track.uri)})
+                startPlayback(deviceId, {uris: tracks.map(track => track.uri)})
             }
         }
     }, [player, deviceId, tracks]);
@@ -83,26 +91,23 @@ export default function SongPlayer({tracks}) {
     // }
 
     return (
-        <>
-            <h1 style={{textAlign: 'center'}}>{ready? "Ready" : "Not ready"}</h1>
-            <div className={styles.container}>
-                <div className={styles.main_wrapper}>
-                    <img src={current_track.album.images[0].url} 
-                         className={styles.now_playing__cover} alt="" />
-    
-                    <div className={styles.now_playing__side}>
-                        <div className={styles.now_playing__name}>{
-                                      current_track.name
-                                      }</div>
-    
-                        <div className={styles.now_playing__artist}>{
-                                      current_track.artists[0].name
-                                      }</div>
+        <div className="flex flex-col gap-2 justify-center">
+                {/* <h1 style={{textAlign: 'center'}} className={'text-2xl'}>{ready? "Ready" : "Not ready"}</h1> */}
+                    <div className={'flex flex-row justify-center content-center gap-3'}>
+                        
+                        <img src={current_track.album.images[0].url} className={'rounded-md h-24'} alt="" />
+                        <div className="flex flex-col content-center justify-center">
+                                <div className="text-xl">{current_track.name }</div>
+                                <div>{current_track.artists.map((a)=>a.name).join(', ')}</div>
+                                <div className="text-slate-400">~ {current_track.features.tempo.toFixed(1)} BPM</div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <button onClick={()=> {player.nextTrack()}}>Next</button>
-         </>
+                <ButtonGroup>
+                    <Button onClick={()=> {player.previousTrack()}}><MdSkipPrevious /></Button>
+                    <Button onClick={()=> {player.togglePlay()}}>{is_paused? <MdPlayArrow />: <MdPause />}</Button>
+                    <Button onClick={()=> {player.nextTrack()}}><MdSkipNext /></Button>
+                </ButtonGroup>
+        </div>
     )
 
 }
