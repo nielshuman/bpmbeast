@@ -40,8 +40,7 @@ export function PlaylistLoader({setTracks}) {
     let tracks = await loadTracks();
     setStatus({loading: true, stage: LOADING_FEATURES, progress: 0})
     let features = await loadFeatures(tracks);
-    console.log(tracks, features)
-    features =  features.filter(f => f !== null);
+
     for (let track of tracks) {
       track.features = features.find(f => f.id === track.id);
     }
@@ -54,13 +53,17 @@ export function PlaylistLoader({setTracks}) {
     let tracks_generator = playlistId === 'saved' ? getSavedTracks() : getPlayListTracks(playlistId)
     let tracks = []
     for await (const { items, total } of tracks_generator) {
-      // setTracks(prev => [...prev, ...items])
       for (let item of items) {
         tracks.push(item.track)
       }
-      // setProgress(tracks.length / total)
       setStatus(prev => ({...prev, progress: tracks.length / total}))
     }
+    let length = tracks.length;
+    tracks = tracks.filter(t => t !== null);
+    console.log(`${length - tracks.length} null-tracks removed`)
+    length = tracks.length;
+    tracks = tracks.filter((track, index, self) => self.findIndex(t => t.id === track.id) === index)
+    console.log(`${length - tracks.length} duplicate tracks removed`)
     return tracks;
   }
 
@@ -73,7 +76,10 @@ export function PlaylistLoader({setTracks}) {
       // setProgress(features.length / total)
       setStatus(prev => ({...prev, progress: features.length / total}))
     }
-    return features;
+
+    const filtered_features = features.filter(f => f !== null);
+    console.log(`${features.length - filtered_features.length} null-features removed`)
+    return filtered_features;
   }
 
   const pending = {isDisabled: true}
@@ -82,7 +88,7 @@ export function PlaylistLoader({setTracks}) {
 
   return <>
     <PlaylistSelector onChange={e => setPlaylistId(e.target.value)}></PlaylistSelector>
-    <Button disabled={status.loading} onClick={loadTracksWithFeatures}> Load! </Button>
+    <Button disabled={status.loading} onClick={loadTracksWithFeatures}>Load</Button>
     <Card>
       <CardHeader>
         <div className="flex items-center space-x-3">
@@ -95,7 +101,7 @@ export function PlaylistLoader({setTracks}) {
         </div>
       </CardHeader>
       <CardBody>
-        <Progress value={status.progress} minValue={0} maxValue={1} showValueLabel={true}></Progress>
+        <Progress aria-label={'Progress'} value={status.progress} minValue={0} maxValue={1} showValueLabel={true}></Progress>
       </CardBody>
     </Card>
   </>
@@ -110,7 +116,7 @@ export function PlaylistSelector({ onChange }) {
     }
   }, [])
 
-  return <Select onChange={onChange}>
+  return <Select aria-label="Select a playlist" onChange={onChange}>
     {playlists.map(playlist =>
       <SelectItem key={playlist.id} value={playlist.id}>{playlist.name}</SelectItem>
     )}

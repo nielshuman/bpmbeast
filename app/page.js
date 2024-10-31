@@ -5,7 +5,6 @@ import SpotifyLoginButtons from "@/components/SpotifyLoginButton";
 import { cookies } from "next/headers"
 import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
-
 import { Button, Progress } from "@nextui-org/react";
 
 // import styles from "./page.module.css";

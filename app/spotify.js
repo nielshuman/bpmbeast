@@ -76,9 +76,9 @@ export async function* getTracksAudioFeatures(tracks) {
 }
 
 export function getTracksByTempo(tracks, targetTempo, {tolerance, sorting_method, enable_half_and_double_time}) {
-    console.log(tracks, targetTempo, tolerance, sorting_method, enable_half_and_double_time);
+    // console.log(tracks, targetTempo, tolerance, sorting_method, enable_half_and_double_time);
     let foundTracks = tracks.filter(track => {
-        let tempo = track.features.tempo;
+        let tempo = track.features.tempo;   
         let full_time_matches = (Math.abs(tempo - targetTempo) <= tolerance);
         let half_time_matches = (Math.abs(tempo / 2 - targetTempo) <= tolerance);
         let double_time_matches = (Math.abs(tempo * 2 - targetTempo) <= tolerance);
