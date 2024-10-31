@@ -17,7 +17,7 @@ export async function LoginBar({logged_in}) {
   //   <span> BPM Beast </span>
   //   {logged_in? <UserView profile={profile} /> : <SpotifyLoginButtons.small href={'/api/login'} width={'100px'}/>}    
   // </div>
-  return <Navbar maxWidth="full">
+  return <Navbar maxWidth="full" className={s.container}>
     <NavbarBrand> BPM Beast </NavbarBrand>
     <NavbarContent justify="end">
       {logged_in? <UserView profile={profile} /> : <SpotifyLoginButtons.small href={'/api/login'} width={'100px'}/>}

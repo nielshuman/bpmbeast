@@ -22,7 +22,7 @@ export function SearchOptions({options, setOptions}) {
     <Input className={'w-1/4'} label='Tolerance' type='number' value={options.tolerance} onValueChange={tolerance => setOptions(options => ({...options, tolerance}))} />
     <Switch defaultChecked={options.enable_half_and_double_time} onChange={e => setOptions(options => (
       {...options, enable_half_and_double_time: !options.enable_half_and_double_time}))}>
-        Enable half and double time search
+        halftime/doubletime
     </Switch>
   </div>
 }
@@ -126,12 +126,12 @@ export function PlaylistSelector({ onChange }) {
 
 export function TempoSelector({value, setValue}) {
   // const [value, setValue] = useState(100);
-  return <>
+  return <div className="flex flex-col">
     {/* <Input type="number" value={value} onChange={e=>setValue(Number(e.target.value))}></Input> */}
     <h2 className="text-2xl font-bold text-center">{value} BPM</h2>
     <ButtonGroup>
       <Button onClick={() => setValue(prev => prev-1)}>-</Button>
       <Button onClick={() => setValue(prev => prev+1)}>+</Button>
     </ButtonGroup>
-  </>
+  </div>
 }

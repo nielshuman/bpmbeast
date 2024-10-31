@@ -6,6 +6,7 @@ import { PlaylistLoader } from "./SongFinder";
 import SongPlayer from "./SongPlayer";
 import { getTracksByTempo } from "../app/spotify";
 import Queue from "./Queue";
+import s from './Beast.module.css'
 
 export default function Beast () {
     const [tracks, setTracks] = useState([])
@@ -21,7 +22,7 @@ export default function Beast () {
     const results = getTracksByTempo(tracks, targetTempo, searchOptions)
 
     
-    return <> 
+    return <div className={s.container}> 
     { tracks_loaded? 
         <>
             <TempoSelector value={targetTempo} setValue={setTargetTempo} />
@@ -34,5 +35,5 @@ export default function Beast () {
             localStorage.setItem('tracks', JSON.stringify(tracks));
         }}/> 
         }
-    </> 
+    </div> 
 }

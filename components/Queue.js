@@ -17,7 +17,8 @@ export function Track({track}) {
         <CardBody>
       <div className="flex items-center space-x-3 h-16">
         <div className="">
-          <Image src={track.album.images[0].url} width={50} height={50} />
+          {/* <Image src={track.album.images[0].url} width={50} height={50} /> */}
+          <img src={track.album.images[0].url} alt={track.album.name} className="w-12 h-12 rounded-lg" />
         </div>
         <div>
           <h3 className="text-lg font-medium">{track.name}</h3>
