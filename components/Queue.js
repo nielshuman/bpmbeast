@@ -13,9 +13,9 @@ export default function Queue({results}) {
 
 export function Track({track}) {
     return (
-      <Card>
+      <Card className="mb-3">
         <CardBody>
-      <div className="flex items-center space-x-3 h-16">
+      <div className="flex items-center space-x-3"> {/* h-16 */}
         <div className="">
           {/* <Image src={track.album.images[0].url} width={50} height={50} /> */}
           <img src={track.album.images[0].url} alt={track.album.name} className="w-12 h-12 rounded-lg" />
@@ -25,6 +25,7 @@ export function Track({track}) {
           <p className="text-sm text-gray-500">{track.album.title}</p>
           <p className="text-sm text-gray-500">BPM: {track.features.tempo}</p>
         </div>
+        {/* TODO: Swipe gedoe */}
       </div>
         </CardBody>
       </Card>

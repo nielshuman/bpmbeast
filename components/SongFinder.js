@@ -13,13 +13,13 @@ const LOADING_FEATURES = 2;
 const DONE = 3;
 
 export function SearchOptions({options, setOptions}) {
-  return <div className='w-full flex gap-4'>  
-    <Select className='w-1/4' label='Sorting method' selectedKeys={[options.sorting_method]} onSelectionChange={sorting_method => setOptions(options => ( {...options, sorting_method}))}>
+  return <div className='w-full flex gap-4 flex-wrap'>  
+    <Select className='w-1/4 min-w-48' label='Sorting method' selectedKeys={[options.sorting_method]} onSelectionChange={sorting_method => setOptions(options => ( {...options, sorting_method}))}>
       <SelectItem key="slowest">Slowest</SelectItem>
       <SelectItem key="fastest">Fastest</SelectItem>
       <SelectItem key="closest">Closest</SelectItem>
     </Select>
-    <Input className={'w-1/4'} label='Tolerance' type='number' value={options.tolerance} onValueChange={tolerance => setOptions(options => ({...options, tolerance}))} />
+    <Input className={'w-1/4 min-w-16'} label='Tolerance' type='number' value={options.tolerance} onValueChange={tolerance => setOptions(options => ({...options, tolerance}))} />
     <Switch defaultChecked={options.enable_half_and_double_time} onChange={e => setOptions(options => (
       {...options, enable_half_and_double_time: !options.enable_half_and_double_time}))}>
         halftime/doubletime
