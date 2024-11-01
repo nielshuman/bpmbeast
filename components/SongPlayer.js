@@ -65,7 +65,7 @@ export default function SongPlayer({tracks}) {
         
             setTrack(state.track_window.current_track);
             setPaused(state.paused);
-        
+            
         
             player.getCurrentState().then( state => { 
                 (!state)? setActive(false) : setActive(true) 
@@ -76,7 +76,6 @@ export default function SongPlayer({tracks}) {
         player.connect();
         return player.disconnect;
     }, []);
-
 
     useEffect(() => {
         // console.table({player, deviceId, tracks});
@@ -91,9 +90,9 @@ export default function SongPlayer({tracks}) {
     // }
 
     return (
-        <div className="flex flex-col gap-2 justify-center">
+        <div className="flex flex-col gap-2 justify-center flex-1">
                 {/* <h1 style={{textAlign: 'center'}} className={'text-2xl'}>{ready? "Ready" : "Not ready"}</h1> */}
-                    <div className={'flex flex-row justify-center content-center gap-3'}>
+                    <div className={'flex flex-row justify-center content-center gap-3 pb-1.5'}>
                         
                         <img src={current_track.album.images[0].url} className={'rounded-md h-24'} alt="" />
                         <div className="flex flex-col content-center justify-center">

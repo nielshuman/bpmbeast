@@ -129,6 +129,7 @@ export function TempoSelector({value, setValue}) {
   return <div className="flex flex-col">
     {/* <Input type="number" value={value} onChange={e=>setValue(Number(e.target.value))}></Input> */}
     <h2 className="text-2xl font-bold text-center">{value} BPM</h2>
+    <h3 className="text text-center pb-3">Target tempo</h3>
     <ButtonGroup>
       <Button onClick={() => setValue(prev => prev-1)}>-</Button>
       <Button onClick={() => setValue(prev => prev+1)}>+</Button>

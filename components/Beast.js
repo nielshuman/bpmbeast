@@ -12,7 +12,7 @@ export default function Beast () {
     const [tracks, setTracks] = useState([])
     useEffect(() => setTracks(JSON.parse(localStorage.getItem('tracks') || '[]')), [])
     const [searchOptions, setSearchOptions] = useState({
-        tolerance: 2,
+        tolerance: 0.5,
         enable_half_and_double_time: false,
         sorting_method: 'slowest'
       })
@@ -22,11 +22,11 @@ export default function Beast () {
     const results = getTracksByTempo(tracks, targetTempo, searchOptions)
 
     
-    return <div className={s.container}> 
+    return <div className={s.container + ' flex-1'}> 
     { tracks_loaded? 
         <>
-            <TempoSelector value={targetTempo} setValue={setTargetTempo} />
             <SongPlayer tracks={results}/>
+            <TempoSelector value={targetTempo} setValue={setTargetTempo} />
             <SearchOptions options={searchOptions} setOptions={setSearchOptions}/>
             <Queue results={results}/>
         </>
