@@ -7,11 +7,20 @@ import SongPlayer from "./SongPlayer";
 import { getTracksByTempo } from "../app/spotify";
 import Queue from "./Queue";
 import s from './Beast.module.css'
+import Cookies from "js-cookie";
 
 export default function Beast () {
     const [tracks, setTracks] = useState([])
     useEffect(() => setTracks(JSON.parse(localStorage.getItem('tracks') || '[]')), [])
-
+    useEffect(() => {
+        if (tracks.length) {
+            Cookies.set('tracks_loaded', 'true')
+            // console.warn('setting localstorage')
+            localStorage.setItem('tracks', JSON.stringify(tracks));
+        } else {
+            Cookies.set('tracks_loaded', 'false')
+        }
+    }, [tracks])
     // search options
     const [tolerance, setTolerance] = useState(0.5)
     const [enableTime, setEnableTime] = useState(false)
@@ -31,7 +40,6 @@ export default function Beast () {
     
     const loader = <PlaylistLoader setTracks={tracks => {
         setTracks(tracks);
-        localStorage.setItem('tracks', JSON.stringify(tracks));
     }}/>
 
     return <div className={s.container + ' flex-1'}> 

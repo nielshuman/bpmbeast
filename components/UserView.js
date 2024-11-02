@@ -3,6 +3,7 @@ import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@
 import s from './UserView.module.css'
 import { IoLogOut } from "react-icons/io5";
 import { FaExchangeAlt } from "react-icons/fa";
+import Cookies from "js-cookie";
 export function UserView({profile}) {
     // console.log(profile)
 
@@ -10,6 +11,7 @@ export function UserView({profile}) {
       console.log(e)
       if (e == 'change') {
           localStorage.removeItem('tracks');
+          Cookies.set('tracks_loaded', 'false');
           window.location.reload();
       }
     }

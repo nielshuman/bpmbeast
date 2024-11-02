@@ -5,7 +5,7 @@ export default function Queue({results}) {
     return <Accordion variant="shadow">
         <AccordionItem title="Queue">
             {results.map(track => <>
-                <Track key={track.id} track={track}>{console.log(track.id)}</Track>
+                <Track key={track.id} track={track}></Track>
             </>)}
         </AccordionItem>
     </Accordion>
