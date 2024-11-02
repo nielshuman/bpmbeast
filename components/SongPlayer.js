@@ -9,7 +9,7 @@ import { Button, ButtonGroup, Card, CardBody } from "@nextui-org/react";
 import { MdPause, MdPlayArrow, MdSkipNext } from "react-icons/md";
 import { MdSkipPrevious } from "react-icons/md";
 
-const dummyTrack = {
+export const dummyTrack = {
     name: "No song playing",
     album: {
         images: [

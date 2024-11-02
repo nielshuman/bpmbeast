@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { SearchOptions, TempoSelector } from "./SongFinder";
-import { PlaylistLoader } from "./SongFinder";
+import { SearchOptions, TempoSelector } from "./SearchOptions";
+import PlaylistLoader from "./PlaylistLoader";
 import SongPlayer from "./SongPlayer";
 import { getTracksByTempo } from "../app/spotify";
 import Queue from "./Queue";
@@ -22,19 +22,19 @@ export default function Beast () {
     const tracks_loaded = Boolean(tracks.length)
     const results = getTracksByTempo(tracks, targetTempo, searchOptions)
 
+    const main = <>
+        <SongPlayer tracks={results}/>
+        <TempoSelector value={targetTempo} setValue={setTargetTempo} />
+        <SearchOptions options={searchOptions} setOptions={setSearchOptions}/>
+        <Queue results={results}/>
+    </>
     
+    const loader = <PlaylistLoader setTracks={tracks => {
+        setTracks(tracks);
+        localStorage.setItem('tracks', JSON.stringify(tracks));
+    }}/>
+
     return <div className={s.container + ' flex-1'}> 
-    { tracks_loaded? 
-        <>
-            <SongPlayer tracks={results}/>
-            <TempoSelector value={targetTempo} setValue={setTargetTempo} />
-            <SearchOptions options={searchOptions} setOptions={setSearchOptions}/>
-            <Queue results={results}/>
-        </>
-        : <PlaylistLoader setTracks={tracks => {
-            setTracks(tracks);
-            localStorage.setItem('tracks', JSON.stringify(tracks));
-        }}/> 
-        }
+        { tracks_loaded? main : loader}
     </div> 
 }
