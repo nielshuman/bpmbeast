@@ -3,9 +3,7 @@ import { useState, useEffect } from 'react';
 import useAsyncEffect from 'use-async-effect';
 import { getPlayListTracks, getPlaylists, getSavedTracks, getTracksAudioFeatures, getTracksByTempo } from '../app/spotify';
 import { Button, ButtonGroup, Card, CardBody, CardHeader, Chip, Input, Progress, Select, SelectItem, Switch } from '@nextui-org/react';
-import Image from 'next/image';
 import { IoIosCheckmark, IoIosCheckmarkCircle } from "react-icons/io";
-import { color } from 'framer-motion';
 
 const READY = 0;
 const LOADING_TRACKS = 1;
@@ -13,17 +11,26 @@ const LOADING_FEATURES = 2;
 const DONE = 3;
 
 export function SearchOptions({options, setOptions}) {
-  return <div className='w-full flex gap-4 flex-wrap'>  
-    <Select className='w-1/4 min-w-48' label='Sorting method' selectedKeys={[options.sorting_method]} onSelectionChange={sorting_method => setOptions(options => ( {...options, sorting_method}))}>
-      <SelectItem key="slowest">Slowest</SelectItem>
-      <SelectItem key="fastest">Fastest</SelectItem>
-      <SelectItem key="closest">Closest</SelectItem>
-    </Select>
-    <Input className={'w-1/4 min-w-16'} label='Tolerance' type='number' value={options.tolerance} onValueChange={tolerance => setOptions(options => ({...options, tolerance}))} />
-    <Switch defaultChecked={options.enable_half_and_double_time} onChange={e => setOptions(options => (
-      {...options, enable_half_and_double_time: !options.enable_half_and_double_time}))}>
-        halftime/doubletime
-    </Switch>
+  const {tolerance, enableTime, sort} = options;
+  const {setTolerance, setEnableTime, setSort} = setOptions;
+
+  return <div className='w-full flex gap-4 flex-wrap'>
+    <div className='flex gap-4 grow'>
+      <Select className='basis-2/3' label='Sorting method' selectedKeys={[sort]} onSelectionChange={value => setSort(value)}>
+        <SelectItem key="slowest">Slowest</SelectItem>
+        <SelectItem key="fastest">Fastest</SelectItem>
+        <SelectItem key="closest">Closest</SelectItem>
+      </Select>
+      <Input className={'basis-1/3 grow'} label='Tolerance' type='number' value={tolerance} onValueChange={value => setTolerance(value)} />
+    </div>  
+    <div className='flex flex-col gap-3'>
+      <Switch className={'w-1/3'} isSelected={enableTime} onChange={value => setEnableTime(!enableTime)}>
+          halftime/doubletime
+      </Switch>
+      <Switch className={'w-1/3'} isSelected={enableTime} onChange={value => setEnableTime(!enableTime)}>
+          halftime/doubletime
+      </Switch>
+    </div>
   </div>
 }
 

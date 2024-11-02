@@ -14,7 +14,7 @@ export default function Home() {
   let logged_in = Boolean(cookies().get('access_token'))
   return <div className={`dark text-foreground bg-background ${inter.className} flex min-h-screen min-h-full flex-col`}>
       <LoginBar logged_in={logged_in}/>
-      <main className="flex flex-col flex-1">
+      <main className="flex flex-col flex-1 items-center">
         {logged_in? <Beast /> : <LoginView /> }
       </main>
     </div>

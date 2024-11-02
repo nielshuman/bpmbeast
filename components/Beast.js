@@ -11,13 +11,14 @@ import s from './Beast.module.css'
 export default function Beast () {
     const [tracks, setTracks] = useState([])
     useEffect(() => setTracks(JSON.parse(localStorage.getItem('tracks') || '[]')), [])
-    const [searchOptions, setSearchOptions] = useState({
-        tolerance: 0.5,
-        enable_half_and_double_time: false,
-        sorting_method: 'slowest'
-      })
-    const [targetTempo, setTargetTempo] = useState(100)
 
+    // search options
+    const [tolerance, setTolerance] = useState(0.5)
+    const [enableTime, setEnableTime] = useState(false)
+    const [sort, setSort] = useState('slowest')
+    const [targetTempo, setTargetTempo] = useState(100)
+    const searchOptions = {tolerance, enableTime, sort, targetTempo}
+    const setSearchOptions = {setTolerance, setEnableTime, setSort, setTargetTempo}
     const tracks_loaded = Boolean(tracks.length)
     const results = getTracksByTempo(tracks, targetTempo, searchOptions)
 
