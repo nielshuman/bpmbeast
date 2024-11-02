@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SearchOptions, TempoSelector } from "./SearchOptions";
 import PlaylistLoader from "./PlaylistLoader";
 import SongPlayer from "./SongPlayer";
@@ -8,10 +8,28 @@ import { getTracksByTempo } from "../app/spotify";
 import Queue from "./Queue";
 import s from './Beast.module.css'
 import Cookies from "js-cookie";
+import useEvent from "react-use-event";
 
-export default function Beast () {
+export default function Beast ({loaded_cookie}) {
     const [tracks, setTracks] = useState([])
-    useEffect(() => setTracks(JSON.parse(localStorage.getItem('tracks') || '[]')), [])
+    const [tolerance, setTolerance] = useState(0.5)
+    const [enableTime, setEnableTime] = useState(false)
+    const [sort, setSort] = useState('slowest')
+    const [targetTempo, setTargetTempo] = useState(100)
+    const searchOptions = {tolerance, enableTime, sort, targetTempo}
+    const setSearchOptions = {setTolerance, setEnableTime, setSort, setTargetTempo}
+    const [skipCheck, setSkipCheck] = useState(loaded_cookie.value === 'true')
+    
+    useEffect(() => {
+        setSkipCheck(false);
+        setTracks(JSON.parse(localStorage.getItem('tracks') || '[]'))
+    }, []);
+    
+    useEvent('delete_tracks', () => {
+        localStorage.removeItem('tracks');
+        Cookies.set('tracks_loaded', 'false');
+        setTracks([]);
+    });
     useEffect(() => {
         if (tracks.length) {
             Cookies.set('tracks_loaded', 'true')
@@ -22,15 +40,11 @@ export default function Beast () {
         }
     }, [tracks])
     // search options
-    const [tolerance, setTolerance] = useState(0.5)
-    const [enableTime, setEnableTime] = useState(false)
-    const [sort, setSort] = useState('slowest')
-    const [targetTempo, setTargetTempo] = useState(100)
-    const searchOptions = {tolerance, enableTime, sort, targetTempo}
-    const setSearchOptions = {setTolerance, setEnableTime, setSort, setTargetTempo}
-    const tracks_loaded = Boolean(tracks.length)
+    
+    // console.log(loaded_cookie)
+    const tracks_loaded = skipCheck || tracks.length > 0
     const results = getTracksByTempo(tracks, targetTempo, searchOptions)
-
+    
     const main = <>
         <SongPlayer tracks={results}/>
         <TempoSelector value={targetTempo} setValue={setTargetTempo} />

@@ -3,16 +3,16 @@ import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@
 import s from './UserView.module.css'
 import { IoLogOut } from "react-icons/io5";
 import { FaExchangeAlt } from "react-icons/fa";
-import Cookies from "js-cookie";
+import useEvent from "react-use-event";
 export function UserView({profile}) {
     // console.log(profile)
+    const deleteEvent = useEvent('delete_tracks');
 
     function onAction(e) {
       console.log(e)
       if (e == 'change') {
-          localStorage.removeItem('tracks');
-          Cookies.set('tracks_loaded', 'false');
-          window.location.reload();
+          deleteEvent();
+          // window.location.reload();
       }
     }
 

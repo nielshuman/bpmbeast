@@ -15,7 +15,7 @@ export default function Home() {
   return <div className={`dark text-foreground bg-background ${inter.className} flex min-h-screen min-h-full flex-col`}>
       <LoginBar logged_in={logged_in}/>
       <main className="flex flex-col flex-1 items-center">
-        {logged_in? <Beast /> : <LoginView /> }
+        {logged_in? <Beast loaded_cookie={cookies().get('tracks_loaded')}/> : <LoginView />}
       </main>
     </div>
 }
