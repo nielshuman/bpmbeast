@@ -25,62 +25,24 @@ export const dummyTrack = {
 }
 
 
-export default function SongPlayer({tracks}) {
-    const [player, setPlayer] = useState(undefined)
-    const [deviceId, setDeviceId] = useState(undefined)
-    const [ready, setReady] = useState(false)
-
-    const [is_paused, setPaused] = useState(false);
-    const [is_active, setActive] = useState(false);
-    const [current_track, setTrack] = useState(dummyTrack);
-
-    current_track.features = tracks.find(track => track.uri === current_track.uri)?.features || dummyTrack.features;
+export default function SongPlayer({tracks, playbackprops}) {
     
-    useAsyncEffect(async () => {
-        const { Player } = await webPlaybackSDK()
-        const player = new Player({
-            name: 'BPM Beast',
-            getOAuthToken: cb => { cb(Cookies.get('access_token')); },
-            volume: 0.5
-        });
+    const {player, deviceId, ready, paused, active, currentTrack} = playbackprops;
 
-        setPlayer(player);
-
-        player.addListener('ready', ({ device_id }) => {
-            console.log('Ready with Device ID', device_id);
-            setDeviceId(device_id);
-            setReady(true);
-        });
-
-        player.addListener('not_ready', ({ device_id }) => {
-            console.log('Device ID has gone offline', device_id);
-            setReady(false);
-        });
-
-        player.addListener('player_state_changed', ( state => {
-
-            if (!state) {
-                return;
-            }
+    currentTrack.features = tracks.find(track => track.uri === currentTrack.uri)?.features || dummyTrack.features;
+    
+    useEffect(() => {
+        if (!player) {
+            return;
+        }
         
-            setTrack(state.track_window.current_track);
-            setPaused(state.paused);
-            
-        
-            player.getCurrentState().then( state => { 
-                (!state)? setActive(false) : setActive(true) 
-            });
-        
-        }));
-
-        player.connect();
-        return player.disconnect;
-    }, []);
+        player.connect()
+    }, [player]);
 
     useEffect(() => {
         // console.table({player, deviceId, tracks});
         if (player && deviceId && tracks.length) {
-            if (current_track.uri !== tracks[0].uri) {
+            if (currentTrack.uri !== tracks[0].uri) {
                 startPlayback(deviceId, {uris: tracks.map(track => track.uri)})
             }
         }
@@ -94,16 +56,16 @@ export default function SongPlayer({tracks}) {
                 {/* <h1 style={{textAlign: 'center'}} className={'text-2xl'}>{ready? "Ready" : "Not ready"}</h1> */}
                     <div className={'flex flex-row justify-center content-center gap-3 pb-1.5'}>
                         
-                        <img src={current_track.album.images[0].url} className={'rounded-md h-24'} alt="" />
+                        <img src={currentTrack.album.images[0].url} className={'rounded-md h-24'} alt="" />
                         <div className="flex flex-col content-center justify-center">
-                                <div className="text-xl">{current_track.name }</div>
-                                <div>{current_track.artists.map((a)=>a.name).join(', ')}</div>
-                                <div className="text-slate-400">~ {current_track.features.tempo.toFixed(1)} BPM</div>
+                                <div className="text-xl">{currentTrack.name }</div>
+                                <div>{currentTrack.artists.map((a)=>a.name).join(', ')}</div>
+                                <div className="text-slate-400">~ {currentTrack.features.tempo.toFixed(1)} BPM</div>
                         </div>
                     </div>
                 <ButtonGroup>
                     <Button onClick={()=> {player.previousTrack()}}><MdSkipPrevious /></Button>
-                    <Button onClick={()=> {player.togglePlay()}}>{is_paused? <MdPlayArrow />: <MdPause />}</Button>
+                    <Button onClick={()=> {player.togglePlay()}}>{paused? <MdPlayArrow />: <MdPause />}</Button>
                     <Button onClick={()=> {player.nextTrack()}}><MdSkipNext /></Button>
                 </ButtonGroup>
         </div>
