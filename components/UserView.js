@@ -6,17 +6,21 @@ import s from './UserView.module.css'
 import { IoLogOut } from "react-icons/io5";
 import { FaExchangeAlt } from "react-icons/fa";
 import useEvent from "react-use-event";
+import useAsyncEffect from "use-async-effect";
+import { spot } from "@/app/spotify";
+import { useState } from "react";
 
 const dummyProfile = {
-    display_name: "Unknown",
+    display_name: "Loading...",
     images: [
         { url: "/album_placeholder.png" },
         { url: "/album_placeholder.png" }
     ]
 }
 
-export function UserView({profile}) {
-    console.log(profile)
+export function UserView() {
+    const [profile, setProfile] = useState(dummyProfile);
+    useAsyncEffect(async () => setProfile(await spot('https://api.spotify.com/v1/me')), []);
     const deleteEvent = useEvent('delete_tracks');
     function onAction(e) {
       console.log(e)
@@ -24,11 +28,6 @@ export function UserView({profile}) {
           deleteEvent();
       }
     }
-
-    if (!profile.images) {
-        profile = dummyProfile
-    }
-
     return <Dropdown backdrop="blur">
       <DropdownTrigger>
         <div className={s.UserView}>
