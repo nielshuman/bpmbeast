@@ -5,7 +5,7 @@ import SpotifyLoginButtons from "@/components/SpotifyLoginButton";
 import { cookies } from "next/headers"
 import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
-import { Button, Progress } from "@nextui-org/react";
+import { Button, Chip, Progress } from "@nextui-org/react";
 
 // import styles from "./page.module.css";
 // const PlaylistSelector = dynamic(() => import('./PlaylistSelector'), { ssr: false })
@@ -23,8 +23,12 @@ export default function Home() {
 }
 
 function LoginView() {
-  return <div>
-        Log in to use the beasty beast <br />
+  return <div className="flex flex-col items-center">
+    <div className="flex gap-2 items-center">
+        <h1 className="text-3xl"> BPM Beast </h1> <Chip color='primary'>Beta</Chip>
+    </div>
+        <span className="pb-5 text-center"> Please log in to use BPM Beast. <br/>
+        This is a beta release so expect some bugs. </span>
         <SpotifyLoginButtons.normal href={'/api/login'} width={'250px'}/>
-      </div>
+    </div>
 }

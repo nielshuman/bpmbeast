@@ -11,15 +11,21 @@
     /* padding:16px 31px; */
     padding: 10px;
     text-decoration:none;
+    transition: all 0.3s;
 }
 
 .btn:hover {
-    
+  transform: scale(1.05);    
 }
 
 .green {
   background-color: #1ED760;
   color: #ffffff;
+}
+
+.grey {
+  background-color: rgb(63, 63, 70);
+  color: #ffffff; 
 }
 
 .black {

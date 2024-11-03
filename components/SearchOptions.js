@@ -19,9 +19,9 @@ export function SearchOptions({options, setOptions}) {
       <Switch className={'w-1/3'} isSelected={enableTime} onChange={value => setEnableTime(!enableTime)}>
           halftime/doubletime
       </Switch>
-      <Switch className={'w-1/3'} isSelected={enableTime} onChange={value => setEnableTime(!enableTime)}>
+      {/* <Switch className={'w-1/3'} isSelected={enableTime} onChange={value => setEnableTime(!enableTime)}>
           increase tempo when queue is empty
-      </Switch>
+      </Switch> */}
     </div>
   </div>
 }
