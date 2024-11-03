@@ -10,17 +10,20 @@ import s from './Beast.module.css'
 import Cookies from "js-cookie";
 import useEvent from "react-use-event";
 import useAsyncEffect from "use-async-effect";
+import useStateRef from "react-usestateref";
 
 export default function Beast ({tracks_loaded_srv}) {
     // tracks management
     const [tracks, setTracks] = useState([])
     const [skipCheck, setSkipCheck] = useState(tracks_loaded_srv)
 
+    // load tracks from localstorage
     useEffect(() => {
         setSkipCheck(false);
         setTracks(JSON.parse(localStorage.getItem('tracks') || '[]'))
     }, []);
 
+    // save tracks to localstorage when playlist is updated
     useEffect(() => {
         if (tracks.length) {
             Cookies.set('tracks_loaded', 'true')
@@ -35,6 +38,7 @@ export default function Beast ({tracks_loaded_srv}) {
         localStorage.removeItem('tracks');
         Cookies.set('tracks_loaded', 'false');
         setTracks([]);
+        playerRef.current.pause();
     });
 
     // Search options
@@ -46,7 +50,8 @@ export default function Beast ({tracks_loaded_srv}) {
     const setSearchOptions = {setTolerance, setEnableTime, setSort, setTargetTempo}
     
     // web playback sdk
-    const [player, setPlayer] = useState(undefined)
+    // const [player, setPlayer] = useState(undefined)
+    const [player, setPlayer, playerRef] = useStateRef(undefined)
     const [deviceId, setDeviceId] = useState(undefined)
     const [ready, setReady] = useState(false)
     const [paused, setPaused] = useState(false)
