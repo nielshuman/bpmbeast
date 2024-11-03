@@ -11,10 +11,10 @@ import Cookies from "js-cookie";
 import useEvent from "react-use-event";
 import useAsyncEffect from "use-async-effect";
 
-export default function Beast ({loaded_cookie}) {
+export default function Beast ({tracks_loaded_srv}) {
     // tracks management
     const [tracks, setTracks] = useState([])
-    const [skipCheck, setSkipCheck] = useState(loaded_cookie.value === 'true')
+    const [skipCheck, setSkipCheck] = useState(tracks_loaded_srv)
 
     useEffect(() => {
         setSkipCheck(false);
@@ -93,7 +93,6 @@ export default function Beast ({loaded_cookie}) {
         setPlayer(player);
     }, [])
     
-    // console.log(loaded_cookie)
     const tracks_loaded = skipCheck || tracks.length > 0
     const results = getTracksByTempo(tracks, targetTempo, searchOptions)
     
