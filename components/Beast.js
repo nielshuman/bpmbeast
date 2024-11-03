@@ -38,21 +38,19 @@ export default function Beast ({tracks_loaded_srv}) {
         localStorage.removeItem('tracks');
         Cookies.set('tracks_loaded', 'false');
         setTracks([]);
-        playerRef.current.pause();
+        player.pause();
     });
 
     // Search options
     const [tolerance, setTolerance] = useState(0.5)
     const [enableTime, setEnableTime] = useState(false)
-    const [sort, setSort] = useState('closest')
+    const [sort, setSort] = useState('slowest')
     const [targetTempo, setTargetTempo] = useState(100)
     const searchOptions = {tolerance, enableTime, sort, targetTempo}
     const setSearchOptions = {setTolerance, setEnableTime, setSort, setTargetTempo}
     
     // web playback sdk
     const [player, setPlayer] = useState(undefined)
-    const playerRef = {current: player}
-    // const [player, setPlayer, playerRef] = useStateRef(undefined)
     const [deviceId, setDeviceId] = useState(undefined)
     const [ready, setReady] = useState(false)
     const [paused, setPaused] = useState(false)
@@ -60,7 +58,9 @@ export default function Beast ({tracks_loaded_srv}) {
     const [currentTrack, setCurrentTrack] = useState(dummyTrack)
     const playbackprops = {player, deviceId, ready, paused, active, currentTrack}
     
+    // initialize web playback sdk
     useAsyncEffect(async () => {
+        console.log('INITIALIZING WEB PLAYBACK SDK')
         const { Player } = await webPlaybackSDK()
         
         const player = new Player({
