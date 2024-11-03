@@ -28,7 +28,7 @@ function LoginView() {
         <h1 className="text-3xl"> BPM Beast </h1> <Chip color='primary'>Beta</Chip>
     </div>
         <span className="pb-5 text-center"> Please log in to use BPM Beast. <br/>
-        This is a beta release so expect some bugs. </span>
+        This is a closed beta (so expect some bugs). </span>
         <SpotifyLoginButtons.normal href={'/api/login'} width={'250px'}/>
     </div>
 }
