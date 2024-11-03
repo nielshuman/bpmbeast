@@ -15,7 +15,7 @@ export function SearchOptions({options, setOptions}) {
       </Select>
       <Input className={'basis-1/3 grow'} label='Tolerance' type='number' value={tolerance} onValueChange={value => setTolerance(value)} />
     </div>  
-    <div className='flex flex-col gap-3'>
+    <div className='flex flex-col gap-3 justify-center'>
       <Switch className={'w-1/3'} isSelected={enableTime} onChange={value => setEnableTime(!enableTime)}>
           halftime/doubletime
       </Switch>
