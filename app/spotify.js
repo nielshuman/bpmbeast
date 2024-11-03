@@ -75,21 +75,21 @@ export async function* getTracksAudioFeatures(tracks) {
     }
 }
 
-export function getTracksByTempo(tracks, targetTempo, {tolerance, sorting_method, enable_half_and_double_time}) {
-    // console.log(tracks, targetTempo, tolerance, sorting_method, enable_half_and_double_time);
+export function getTracksByTempo(tracks, {tolerance, enableTime, sort, targetTempo}) {
+    // console.log(tracks, targetTempo, tolerance, sorting_method, enableTime);
     let foundTracks = tracks.filter(track => {
         let tempo = track.features.tempo;   
         let full_time_matches = (Math.abs(tempo - targetTempo) <= tolerance);
         let half_time_matches = (Math.abs(tempo / 2 - targetTempo) <= tolerance);
         let double_time_matches = (Math.abs(tempo * 2 - targetTempo) <= tolerance);
-        return full_time_matches || (enable_half_and_double_time && (half_time_matches || double_time_matches));
+        return full_time_matches || (enableTime && (half_time_matches || double_time_matches));
     });
     const sorting_methods = {
         closest: (a, b) => Math.abs(a.features.tempo - targetTempo) - Math.abs(b.features.tempo - targetTempo),
         slowest: (a, b) => a.features.tempo - b.features.tempo,
         fastest: (a, b) => b.features.tempo - a.features.tempo
     };
-    return foundTracks.sort(sorting_methods[sorting_method]);
+    return foundTracks.sort(sorting_methods[sort]);
 }
 
 

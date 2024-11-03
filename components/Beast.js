@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { SearchOptions, TempoSelector } from "./SearchOptions";
 import PlaylistLoader from "./PlaylistLoader";
 import SongPlayer, { dummyTrack } from "./SongPlayer";
-import { getTracksByTempo, webPlaybackSDK } from "../app/spotify";
+import { getTracksByTempo, startPlayback, webPlaybackSDK } from "../app/spotify";
 import Queue from "./Queue";
 import s from './Beast.module.css'
 import Cookies from "js-cookie";
@@ -44,30 +44,33 @@ export default function Beast ({tracks_loaded_srv}) {
     // Search options
     const [tolerance, setTolerance] = useState(0.5)
     const [enableTime, setEnableTime] = useState(false)
-    const [sort, setSort] = useState('slowest')
+    const [sort, setSort] = useState('closest')
     const [targetTempo, setTargetTempo] = useState(100)
     const searchOptions = {tolerance, enableTime, sort, targetTempo}
     const setSearchOptions = {setTolerance, setEnableTime, setSort, setTargetTempo}
     
     // web playback sdk
-    // const [player, setPlayer] = useState(undefined)
-    const [player, setPlayer, playerRef] = useStateRef(undefined)
+    const [player, setPlayer] = useState(undefined)
+    const playerRef = {current: player}
+    // const [player, setPlayer, playerRef] = useStateRef(undefined)
     const [deviceId, setDeviceId] = useState(undefined)
     const [ready, setReady] = useState(false)
     const [paused, setPaused] = useState(false)
     const [active, setActive] = useState(false)
     const [currentTrack, setCurrentTrack] = useState(dummyTrack)
     const playbackprops = {player, deviceId, ready, paused, active, currentTrack}
-
+    
     useAsyncEffect(async () => {
         const { Player } = await webPlaybackSDK()
-
+        
         const player = new Player({
             name: 'BPM Beast',
             getOAuthToken: cb => { cb(Cookies.get('access_token')); },
             volume: 0.5
-
+            
         });
+
+        setPlayer(player);
 
         player.addListener('ready', ({ device_id }) => {
             console.log('Ready with Device ID', device_id);
@@ -95,12 +98,22 @@ export default function Beast ({tracks_loaded_srv}) {
         }));
 
         console.log('setting player')
-        setPlayer(player);
+        player.connect();
     }, [])
     
     const tracks_loaded = skipCheck || tracks.length > 0
-    const results = getTracksByTempo(tracks, targetTempo, searchOptions)
+    const results = useMemo(() => getTracksByTempo(tracks, searchOptions), [tracks, tolerance, enableTime, sort, targetTempo])
     
+    useEffect(() => {
+        // console.table({player, deviceId, tracks});
+        if (player && deviceId && results.length) {
+            if (currentTrack.uri !== results[0].uri) {
+                // console.log('starting playback', results[0].uri)
+                startPlayback(deviceId, {uris: results.map(track => track.uri)})
+            }
+        }
+    }, [results, deviceId, player]);
+
     const main = <>
         <SongPlayer tracks={results} playbackprops={playbackprops}/> 
         <TempoSelector value={targetTempo} setValue={setTargetTempo} />

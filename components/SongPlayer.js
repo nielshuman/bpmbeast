@@ -30,14 +30,6 @@ export default function SongPlayer({tracks, playbackprops}) {
     const {player, deviceId, ready, paused, active, currentTrack} = playbackprops;
 
     currentTrack.features = tracks.find(track => track.uri === currentTrack.uri)?.features || dummyTrack.features;
-    
-    useEffect(() => {
-        if (!player) {
-            return;
-        }
-        
-        player.connect()
-    }, [player]);
 
     useEffect(() => {
         // console.table({player, deviceId, tracks});
