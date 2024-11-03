@@ -1,19 +1,32 @@
 'use client'; // tijdelijke bugfix
+// TODO: refresh token server side
+
 import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
 import s from './UserView.module.css'
 import { IoLogOut } from "react-icons/io5";
 import { FaExchangeAlt } from "react-icons/fa";
 import useEvent from "react-use-event";
-export function UserView({profile}) {
-    // console.log(profile)
-    const deleteEvent = useEvent('delete_tracks');
 
+const dummyProfile = {
+    display_name: "Unknown",
+    images: [
+        { url: "/album_placeholder.png" },
+        { url: "/album_placeholder.png" }
+    ]
+}
+
+export function UserView({profile}) {
+    console.log(profile)
+    const deleteEvent = useEvent('delete_tracks');
     function onAction(e) {
       console.log(e)
       if (e == 'change') {
           deleteEvent();
-          // window.location.reload();
       }
+    }
+
+    if (!profile.images) {
+        profile = dummyProfile
     }
 
     return <Dropdown backdrop="blur">
